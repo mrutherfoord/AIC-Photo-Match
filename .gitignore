@@ -1,7 +1,7 @@
 # Don't store the node modules or dist build!
 .DS_Store
-node_modules
-/dist
+frontEnd/node_modules
+frontEnd/dist
 
 # local env files
 .env.local
