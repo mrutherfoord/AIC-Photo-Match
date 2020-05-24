@@ -4,6 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!-- for csp policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src *;
+        img-src * 'self' data: https: http:;
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' *;
+        style-src  'self' 'unsafe-inline' *">
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
