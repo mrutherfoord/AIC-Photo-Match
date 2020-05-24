@@ -3,6 +3,9 @@
 frontEnd/node_modules
 frontEnd/dist
 
+# Don't show your privates (key)!
+*.aws/*
+
 # local env files
 .env.local
 .env.*.local

@@ -14,7 +14,7 @@
         <input type="submit" @click="submitFile" id="submit" />
       </div>
 
-      <div id="show"></div>
+      <progress id="show" max="100" value="0"></progress>
 
     </form>
   </div>
@@ -39,33 +39,36 @@ export default {
     submitFile() {
       const pic = document.getElementById('fileUpload').files;
 
-      if (pic) {
-        const file = pic[0];
-        const fileName = file.name;
-        const filePath = `${this.bucketName}/${fileName}`;
-        // change to bucket name
-        // const fileUrl = `https://${this.bucketRegion}.amazonaws.com/my-first-bucket/${filePath}`;
-
-        this.s3
-          .upload({
-            Key: filePath,
-            Body: file,
-            ACL: 'public-read',
-          }, (err, data) => {
-            if (err) {
-              throw err;
-            }
-            console.log(data);
-            alert('Successfully Uploaded!');
-          });
-        /*
-         * .on('httpUploadProgress', (progress) => {
-         *   let uploaded = parseInt((progress.loaded * 100) / progress.total);
-         *   $('progress').attr('value', uploaded);
-         * });
-         */
+      if (!pic.length) {
+        return 0;
       }
+
+      const file = pic[0];
+      const fileName = file.name;
+      const filePath = `${this.bucketName}/${fileName}`;
+      // change to bucket name
+      // const fileUrl = `https://${this.bucketRegion}.amazonaws.com/my-first-bucket/${filePath}`;
+
+      this.s3
+        .upload({
+          Key: filePath,
+          Body: file,
+          ACL: 'public-read',
+        }, (err, data) => {
+          if (err) {
+            throw err;
+          }
+          console.log(data);
+        })
+        .addEventListener('httpUploadProgress', (progress) => {
+          // maybe parseInt instead
+          const uploaded = Number((progress.loaded * 100) / progress.total);
+          document.getElementById('show').setAttribute('value', uploaded);
+        });
+
+      return 1;
     },
+
   },
 
   mounted() {
