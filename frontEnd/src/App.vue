@@ -1,7 +1,7 @@
 <template>
   <div id="app" role="main">
     <div class="pageLay">
-      <h1 class="title">Welcome to this awesome AI Machine-Learning app of awesomeness!</h1>
+      <h1 class="title">AIC Color Match App</h1>
 
       <UploadFile />
 

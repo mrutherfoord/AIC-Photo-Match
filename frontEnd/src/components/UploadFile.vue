@@ -1,6 +1,5 @@
 <template>
   <div class="upload">
-    <form id="uploadbanner" enctype="multipart/form-data" method="post">
 
       <div class="inputs">
         <label for="uploadbanner">
@@ -14,9 +13,8 @@
         <input type="submit" @click="submitFile" id="submit" />
       </div>
 
-      <progress id="show" max="100" value="0"></progress>
+      <!-- <progress id="show" max="100" value="0"></progress> -->
 
-    </form>
   </div>
 </template>
 
@@ -28,8 +26,8 @@ export default {
 
   data() {
     return {
-      bucketName: 'mrutherfoordtestbucket',
-      bucketRegion: 'US East (N. Virginia) us-east-1',
+      bucketName: 'bradley-test-bucket',
+      bucketRegion: 'us-east-1',
       IdentityPoolId: 'melAiApp',
       s3: null, // placeholder for configured aws bucket
     };
@@ -40,51 +38,41 @@ export default {
       const pic = document.getElementById('fileUpload').files;
 
       if (!pic.length) {
-        return 0;
-      }
-
-      const file = pic[0];
-      const fileName = file.name;
-      const filePath = `${this.bucketName}/${fileName}`;
-      // change to bucket name
-      // const fileUrl = `https://${this.bucketRegion}.amazonaws.com/my-first-bucket/${filePath}`;
-
-      this.s3
-        .upload({
-          Key: filePath,
-          Body: file,
-          ACL: 'public-read',
-        }, (err, data) => {
-          if (err) {
-            throw err;
-          }
-          console.log(data);
-        })
-        .addEventListener('httpUploadProgress', (progress) => {
-          // maybe parseInt instead
-          const uploaded = Number((progress.loaded * 100) / progress.total);
-          document.getElementById('show').setAttribute('value', uploaded);
+        console.log('no file selected');
+      } else {
+        AWS.config.update({
+          region: this.bucketRegion,
+          credentials: new AWS.CognitoIdentityCredentials({
+            IdentityPoolId: this.IdentityPoolId,
+          }),
         });
 
-      return 1;
+        this.s3 = new AWS.S3();
+
+        const file = pic[0];
+        const fileName = file.name;
+        const params = {
+          Bucket: this.bucketName,
+          Key: fileName,
+          Body: file,
+          ACL: 'public-read',
+        };
+
+        this.s3.putObject(
+          params,
+          (err, data) => {
+            if (err) {
+              console.log(`There is an error: ${err}`);
+            } else {
+              console.log(data);
+            }
+          },
+        );
+      }
     },
 
   },
 
-  mounted() {
-    // configure the aws bucket
-    AWS.config.update({
-      region: this.bucketRegion,
-      credentials: new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: this.IdentityPoolId,
-      }),
-    });
-
-    this.s3 = new AWS.S3({
-      apiVersion: '2006-03-01',
-      params: { Bucket: this.bucketName },
-    });
-  },
 };
 </script>
 
