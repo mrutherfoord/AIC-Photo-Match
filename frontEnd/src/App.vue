@@ -1,14 +1,3 @@
-<template>
-  <div id="app" role="main">
-    <div class="pageLay">
-      <h1 class="title">AIC Color Match App</h1>
-
-      <UploadFile />
-
-    </div><!-- pageLay -->
-  </div>
-</template>
-
 <script>
 import UploadFile from './components/UploadFile.vue';
 
@@ -19,6 +8,23 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div
+    id="app"
+    role="main"
+  >
+
+    <div class="pageLay">
+      <h1 class="title">
+        AIC Color Match App
+      </h1>
+
+      <UploadFile />
+
+    </div><!-- pageLay -->
+  </div>
+</template>
 
 <style lang="scss">
 #app {
