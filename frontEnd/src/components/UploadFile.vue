@@ -1,28 +1,3 @@
-<template>
-  <div class="upload">
-
-    <div class="inputs">
-      <label for="uploadbanner">
-        Upload Your Image
-      </label>
-      <input id="fileUpload" name="myfile" type="file" accept=".jpg, .jpeg, .png" required/>
-    </div>
-
-    <div class="inputs">
-      <input type="submit" @click="submitFile" id="submit" />
-    </div>
-
-      <progress id="showUpload" max="100" :value="upProg"></progress>
-
-      <div class="uploadStatus">
-        <p v-if="success" class="success-upload">Upload Successful</p>
-        <p v-else-if="error" class="error">{{ uploadErrMessage }}</p>
-        <p v-else-if="noneSelected" class="error">Please select an image to upload</p>
-      </div>
-
-  </div>
-</template>
-
 <script>
 import AWS from 'aws-sdk';
 
@@ -42,6 +17,22 @@ export default {
       IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
       s3: null, // placeholder for configured aws S3 bucket
     };
+  },
+
+  mounted() {
+    // set config and bucket name for AWS S3 upload app
+    AWS.config.update({
+      region: this.bucketRegion,
+      credentials: new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: this.IdentityPoolId,
+      }),
+    });
+
+    this.s3 = new AWS.S3({
+      params: {
+        Bucket: this.bucketName,
+      },
+    });
   },
 
   methods: {
@@ -67,6 +58,7 @@ export default {
             this.uploadErrMessage = `Upload Error: ${err}`;
           } else {
             this.success = true;
+            this.getResults();
           }
         })
           .on('httpUploadProgress', (evt) => {
@@ -75,26 +67,71 @@ export default {
       }
     },
 
-  },
+    getResults() {
+      const params = {
+        apiVersion: '2010-03-31',
+        endpoint: 'https://sqs.us-east-1.amazonaws.com/145918816538/AIC_SNS',
+      };
+      const sqs = new AWS.SNS(params);
 
-  mounted() {
-    // set config and bucket name for AWS S3 upload app
-    AWS.config.update({
-      region: this.bucketRegion,
-      credentials: new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: this.IdentityPoolId,
-      }),
-    });
-
-    this.s3 = new AWS.S3({
-      params: {
-        Bucket: this.bucketName,
-      },
-    });
+      console.log(sqs);
+    },
   },
 
 };
 </script>
+
+<template>
+  <div class="upload">
+
+    <div class="inputs">
+      <label for="uploadbanner">
+        Upload Your Image
+      </label>
+      <input
+        id="fileUpload"
+        name="myfile"
+        type="file"
+        accept=".jpg, .jpeg, .png"
+        required
+      />
+    </div>
+
+    <div class="inputs">
+      <input
+        id="submit"
+        type="submit"
+        @click="submitFile"
+      />
+    </div>
+
+    <progress
+      id="showUpload"
+      max="100"
+      :value="upProg"
+    />
+
+    <div class="uploadStatus">
+      <p
+        v-if="success"
+        class="success-upload">
+        Upload Successful
+      </p>
+      <p
+        v-else-if="error"
+        class="error">
+        {{ uploadErrMessage }}
+      </p>
+      <p
+        v-else-if="noneSelected"
+        class="error">
+        Please select an image to upload
+      </p>
+    </div>
+
+  </div>
+</template>
+
 
 <style scoped lang="scss">
 .upload {
@@ -124,6 +161,5 @@ progress[value] {
 .error {
   color: red;
 }
-
 
 </style>
