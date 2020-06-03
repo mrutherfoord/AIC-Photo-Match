@@ -13,9 +13,10 @@ export default {
       uploadErrMessage: '',
       bucketName: 'bradley-test-bucket',
       bucketRegion: 'us-east-1',
-      // IdentityPoolId: 'farts',
       IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
       s3: null, // placeholder for configured aws S3 bucket
+      uploadImg: '', // user submitted image
+      returnImgUrl: '', // aic generated image
     };
   },
 
@@ -43,8 +44,15 @@ export default {
         this.noneSelected = true;
       } else {
         this.noneSelected = false;
-
+        const reader = new FileReader();
         const file = pic[0]; // only upload one file
+        const output = document.getElementById('uploadImg');
+
+        reader.addEventListener('load', (event) => {
+          output.src = event.target.result;
+        });
+        reader.readAsDataURL(file);
+
         const params = {
           Key: file.name,
           ContentType: file.type,
@@ -68,15 +76,30 @@ export default {
     },
 
     getResults() {
+      const sqs = new AWS.SQS({
+        apiVersion: '2012-11-05',
+      });
       const params = {
-        apiVersion: '2010-03-31',
-        endpoint: 'https://sqs.us-east-1.amazonaws.com/145918816538/AIC_SNS',
+        QueueUrl: 'https://sqs.us-east-1.amazonaws.com/145918816538/AIC_SNS',
+        AttributeNames: ['All'],
+        MaxNumberOfMessages: '1',
+        MessageAttributeNames: ['*'],
+        VisibilityTimeout: 60, // in seconds
+        WaitTimeSeconds: 15, // in seconds
       };
-      const sqs = new AWS.SNS(params);
 
-      console.log(sqs);
+      sqs.receiveMessage(params, (err, data) => {
+        if (err) {
+          console.log(err, err.stack); // an error occurred
+        } else {
+          let result = JSON.parse(data.Messages[0].Body).Message;
+          result = JSON.parse(result).Input['aic colors'].url;
+
+          this.returnImgUrl = result;
+        }
+      });
     },
-  },
+  }, // end methods()
 
 };
 </script>
@@ -129,6 +152,17 @@ export default {
       </p>
     </div>
 
+    <div class="photoConatiner">
+      <img
+        id="uploadImg"
+        class="photo"
+      />
+      <img
+        :src="returnImgUrl"
+        class="photo"
+      />
+    </div>
+
   </div>
 </template>
 
@@ -136,8 +170,7 @@ export default {
 <style scoped lang="scss">
 .upload {
   margin: auto;
-  text-align: left;
-  width: 50%;
+  text-align: center;
 }
 
 .inputs {
@@ -162,4 +195,16 @@ progress[value] {
   color: red;
 }
 
+.photoConatiner {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-content: center;
+}
+
+.photo {
+  max-height: 400px;
+  max-width: 400px;
+  object-fit: cover;
+}
 </style>
