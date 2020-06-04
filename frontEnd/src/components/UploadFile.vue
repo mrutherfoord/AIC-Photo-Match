@@ -38,6 +38,11 @@ export default {
 
   methods: {
     submitFile() {
+      // reset if there's an image
+      if (this.uploadImg !== '') {
+        this.uploadImg = '';
+      }
+
       const pic = document.getElementById('fileUpload').files;
 
       if (pic.length === 0 || pic.length > 1) {
@@ -78,6 +83,7 @@ export default {
     getResults() {
       const sqs = new AWS.SQS({
         apiVersion: '2012-11-05',
+        maxRetries: 3,
       });
       const params = {
         QueueUrl: 'https://sqs.us-east-1.amazonaws.com/145918816538/AIC_SNS',
@@ -85,17 +91,28 @@ export default {
         MaxNumberOfMessages: '1',
         MessageAttributeNames: ['*'],
         VisibilityTimeout: 60, // in seconds
-        WaitTimeSeconds: 15, // in seconds
+        WaitTimeSeconds: 20, // in seconds
       };
 
       sqs.receiveMessage(params, (err, data) => {
         if (err) {
-          console.log(err, err.stack); // an error occurred
+          console.log(err, err.stack);
         } else {
           let result = JSON.parse(data.Messages[0].Body).Message;
           result = JSON.parse(result).Input['aic colors'].url;
 
           this.returnImgUrl = result;
+
+          sqs.deleteMessage({
+            QueueUrl: 'https://sqs.us-east-1.amazonaws.com/145918816538/AIC_SNS',
+            ReceiptHandle: data.Messages[0].ReceiptHandle,
+          }, (delErr, delData) => {
+            if (delErr) {
+              console.log(delErr);
+            } else {
+              console.log(delData);
+            }
+          });
         }
       });
     },
@@ -200,11 +217,12 @@ progress[value] {
   flex-direction: row;
   justify-content: space-evenly;
   align-content: center;
+  width: 100%;
+  max-height: 600px;
 }
 
 .photo {
-  max-height: 400px;
-  max-width: 400px;
-  object-fit: cover;
+  margin: 0 2rem 0 2rem;
+  object-fit: contain;
 }
 </style>
