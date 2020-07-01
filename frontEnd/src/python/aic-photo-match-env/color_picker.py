@@ -1,13 +1,10 @@
-"""This is the module docstring"""
+"""Take in an image file (jpg, jpeg, or png), analyize dominant color, search csv for another image
+with the user dominant color within the top three dominant colors, return results as json"""
 
 import sys
 import numpy
 import pandas
 from colorthief import ColorThief #installed
-
-# need to load the file into the script
-df = pandas.read_csv('aic_color_final_2-1.csv')
-aic_colors = df[['red', 'green', 'blue']].values
 
 def dominant_color(image_path):
     '''Function to get dominant color from uploaded photo'''
@@ -71,6 +68,10 @@ def lambda_handler(event):
          "user_blue" : user_blue
          }
     }
+
+# need to load the file into the script
+df = pandas.read_csv('aic_color_final_2-1.csv')
+aic_colors = df[['red', 'green', 'blue']].values
 
 # call the script
 print(lambda_handler(dominant_color(sys.argv[1])))
