@@ -32,6 +32,9 @@ __pycache__/
 # Distribution / packaging
 frontEnd/src/python/aic-photo-match-env/lib/
 frontEnd/src/python/aic-photo-match-env/lib64/
+# no need to track test files
+frontEnd/src/python/aic-photo-match-env/output
+frontEnd/src/python/aic-photo-match-env/demo-image.png/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

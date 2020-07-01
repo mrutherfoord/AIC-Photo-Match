@@ -1,10 +1,10 @@
 <script>
-import UploadFile from './components/UploadFile.vue';
+import UploadFilePython from './components/UploadFilePython.vue';
 
 export default {
   name: 'App',
   components: {
-    UploadFile,
+    UploadFilePython,
   },
 };
 </script>
@@ -15,12 +15,12 @@ export default {
     role="main"
   >
 
-    <div class="pageLay">
+    <div class="page-lay">
       <h1 class="title">
         AIC Color Match App
       </h1>
 
-      <UploadFile />
+      <UploadFilePython />
 
     </div><!-- pageLay -->
   </div>
@@ -36,7 +36,7 @@ export default {
   margin-top: 60px;
 }
 
-.pageLay {
+.page-lay {
   margin: auto;
   width: 60%;
 }
