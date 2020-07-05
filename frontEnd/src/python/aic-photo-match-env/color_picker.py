@@ -1,5 +1,6 @@
-"""Take in an image file (jpg, jpeg, or png), analyize dominant color, search csv for another image
-with the user dominant color within the top three dominant colors, return results as json"""
+'''Take in a user submitted image file (jpg, jpeg, or png), analyize dominant color, search csv for
+another image with the user dominant color within the top three dominant colors, return results as
+json'''
 
 import sys
 import numpy
