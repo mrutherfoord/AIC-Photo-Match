@@ -1,10 +1,10 @@
 <script>
-import UploadFilePython from './components/UploadFilePython.vue';
+import UploadFile from './components/UploadFile.vue';
 
 export default {
   name: 'App',
   components: {
-    UploadFilePython,
+    UploadFile,
   },
 };
 </script>
@@ -20,7 +20,7 @@ export default {
         AIC Color Match App
       </h1>
 
-      <UploadFilePython />
+      <UploadFile />
 
     </div><!-- pageLay -->
   </div>

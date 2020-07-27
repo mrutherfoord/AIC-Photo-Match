@@ -183,7 +183,6 @@ export default {
   </div>
 </template>
 
-
 <style scoped lang="scss">
 .upload {
   margin: auto;
