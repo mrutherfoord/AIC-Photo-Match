@@ -1,11 +1,13 @@
-'''Take in a user submitted image file (jpg, jpeg, or png), analyize dominant color, search csv for
+'''
+Take in a user submitted image file (jpg, jpeg, or png), analyize dominant color, search csv for
 another image with the user dominant color within the top three dominant colors, return results as
-json'''
+json
+'''
 
 import sys
 import numpy
 import pandas
-from colorthief import ColorThief #installed
+from colorthief import ColorThief
 
 def dominant_color(image_path):
     '''Function to get dominant color from uploaded photo'''
@@ -40,7 +42,7 @@ def get_neighbors(train, test_row, num_neighbors):
         neighbors.append(distances[i][0])
         return neighbors
 
-def lambda_handler(event):
+def color_match(event):
     '''Take JSON input from user image and match to AIC painting'''
     # User Colors
     user_red = event['user_img_colors']['red']
@@ -75,4 +77,4 @@ df = pandas.read_csv('aic_color_final_2-1.csv')
 aic_colors = df[['red', 'green', 'blue']].values
 
 # call the script
-print(lambda_handler(dominant_color(sys.argv[1])))
+print(color_match(dominant_color(sys.argv[1])))
