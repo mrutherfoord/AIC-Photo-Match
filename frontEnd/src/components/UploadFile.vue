@@ -15,7 +15,7 @@ export default {
       bucketRegion: 'us-east-1',
       IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
       s3: null, // placeholder for configured aws S3 bucket
-      uploadImg: '', // user submitted image
+      uploadImg: '', // user submitted image, to be displayed
       returnImgUrl: '', // aic generated image
     };
   },
@@ -49,10 +49,11 @@ export default {
         this.noneSelected = true;
       } else {
         this.noneSelected = false;
-        const reader = new FileReader();
         const file = pic[0]; // only upload one file
+        const reader = new FileReader();
         const output = document.getElementById('uploadImg');
 
+        // show the uploaded image
         reader.addEventListener('load', (event) => {
           output.src = event.target.result;
         });
@@ -65,15 +66,19 @@ export default {
           ACL: 'public-read',
         };
 
+        // upload image to be save in S3 bucket
         this.s3.upload(params, (err) => {
           if (err) {
             this.error = true;
             this.uploadErrMessage = `Upload Error: ${err}`;
           } else {
+            // a successful upload will trigger AWS Lambda functions watching this
+            //  particular bucket; fetch result waiting for us from SQS
             this.success = true;
             this.getResults();
           }
         })
+          // show upload progress
           .on('httpUploadProgress', (evt) => {
             this.upProg = parseInt(((evt.loaded * 100) / evt.total), 10);
           });
@@ -103,6 +108,7 @@ export default {
 
           this.returnImgUrl = result;
 
+          // remove message from AWS SQS queue to help ensure correct message is recieved for next
           sqs.deleteMessage({
             QueueUrl: 'https://sqs.us-east-1.amazonaws.com/145918816538/AIC_SNS',
             ReceiptHandle: data.Messages[0].ReceiptHandle,
@@ -169,7 +175,7 @@ export default {
       </p>
     </div>
 
-    <div class="photoConatiner">
+    <div class="photo-container">
       <img
         id="uploadImg"
         class="photo"
@@ -196,11 +202,10 @@ export default {
 progress[value] {
   /* Reset the default appearance */
   -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-
-  width: 250px;
+  -moz-appearance: none;
+  appearance: none;
   height: 20px;
+  width: 250px;
 }
 
 .success-upload {
@@ -211,13 +216,13 @@ progress[value] {
   color: red;
 }
 
-.photoConatiner {
+.photo-container {
+  align-content: center;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  align-content: center;
-  width: 100%;
   max-height: 600px;
+  width: 100%;
 }
 
 .photo {
