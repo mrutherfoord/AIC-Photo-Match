@@ -1,8 +1,17 @@
 <script>
 import AWS from 'aws-sdk';
+import UserImageCard from './UserImageCard.vue';
+import ResultImageCard from './ResultImageCard.vue';
 
 export default {
   name: 'UploadFile',
+
+  components: {
+    UserImageCard,
+    ResultImageCard,
+  },
+
+  props: ['uploadImg', 'returnImgUrl'],
 
   data() {
     return {
@@ -15,8 +24,8 @@ export default {
       bucketRegion: 'us-east-1',
       IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
       s3: null, // placeholder for configured aws S3 bucket
-      uploadImg: '', // user submitted image, to be displayed
-      returnImgUrl: '', // aic generated image
+      // uploadImg: '', // user submitted image, to be displayed
+      // returnImgUrl: '', // aic generated image
     };
   },
 
@@ -46,7 +55,7 @@ export default {
       const pic = document.getElementById('fileUpload').files;
 
       if (pic.length === 0 || pic.length > 1) {
-        this.noneSelected = true;
+        this.noneSelected = true; // for resetting
       } else {
         this.noneSelected = false;
         const file = pic[0]; // only upload one file
@@ -104,11 +113,12 @@ export default {
           console.log(err, err.stack);
         } else {
           let result = JSON.parse(data.Messages[0].Body).Message;
+          console.log(result);
           result = JSON.parse(result).Input['aic colors'].url;
 
           this.returnImgUrl = result;
 
-          // remove message from AWS SQS queue to help ensure correct message is recieved for next
+          // remove message from AWS SQS queue to help ensure correct message is received for next
           sqs.deleteMessage({
             QueueUrl: 'https://sqs.us-east-1.amazonaws.com/145918816538/AIC_SNS',
             ReceiptHandle: data.Messages[0].ReceiptHandle,
@@ -176,14 +186,11 @@ export default {
     </div>
 
     <div class="photo-container">
-      <img
-        id="uploadImg"
-        class="photo"
-      />
-      <img
-        :src="returnImgUrl"
-        class="photo"
-      />
+
+      <UserImageCard :src="uploadImg" />
+
+      <ResultImageCard :src="returnImgUrl" />
+
     </div>
 
   </div>
