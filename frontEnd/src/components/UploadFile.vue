@@ -11,8 +11,6 @@ export default {
     ResultImageCard,
   },
 
-  props: ['uploadImg', 'returnImgUrl'],
-
   data() {
     return {
       upProg: 0, // update progress html element
@@ -25,7 +23,7 @@ export default {
       IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
       s3: null, // placeholder for configured aws S3 bucket
       // uploadImg: '', // user submitted image, to be displayed
-      // returnImgUrl: '', // aic generated image
+      returnImgUrl: '', // aic generated image
     };
   },
 
@@ -113,7 +111,7 @@ export default {
           console.log(err, err.stack);
         } else {
           let result = JSON.parse(data.Messages[0].Body).Message;
-          console.log(result);
+          console.log(JSON.parse(result));
           result = JSON.parse(result).Input['aic colors'].url;
 
           this.returnImgUrl = result;
@@ -122,11 +120,9 @@ export default {
           sqs.deleteMessage({
             QueueUrl: 'https://sqs.us-east-1.amazonaws.com/145918816538/AIC_SNS',
             ReceiptHandle: data.Messages[0].ReceiptHandle,
-          }, (delErr, delData) => {
+          }, (delErr) => {
             if (delErr) {
               console.log(delErr);
-            } else {
-              console.log(delData);
             }
           });
         }
@@ -189,7 +185,7 @@ export default {
 
       <UserImageCard :src="uploadImg" />
 
-      <ResultImageCard :src="returnImgUrl" />
+      <ResultImageCard :aicimgurl="returnImgUrl" />
 
     </div>
 
@@ -228,12 +224,7 @@ progress[value] {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  max-height: 600px;
-  width: 100%;
-}
-
-.photo {
-  margin: 0 2rem 0 2rem;
-  object-fit: contain;
+  margin: auto;
+  width: 80%;
 }
 </style>
