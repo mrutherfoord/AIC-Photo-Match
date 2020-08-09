@@ -39,8 +39,12 @@ export default {
   text-align: center;
 }
 
+.app-copy {
+  margin: auto;
+  width: 70%;
+}
+
 .page-lay {
   margin: auto;
-  width: 60%;
 }
 </style>
