@@ -1,14 +1,16 @@
 <script>
 import AWS from 'aws-sdk';
-import UserImageCard from './UserImageCard.vue';
-import ResultImageCard from './ResultImageCard.vue';
+// import UserImageCard from './UserImageCard.vue';
+// import ResultImageCard from './ResultImageCard.vue';
+import ImageCard from './ImageCard.vue';
 
 export default {
   name: 'UploadFile',
 
   components: {
-    UserImageCard,
-    ResultImageCard,
+    // UserImageCard,
+    // ResultImageCard,
+    ImageCard,
   },
 
   data() {
@@ -22,10 +24,16 @@ export default {
       bucketRegion: 'us-east-1',
       IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
       s3: null, // placeholder for configured aws S3 bucket
-      // uploadImg: '', // user submitted image, to be displayed
-      returnImgUrl: '', // aic generated image
+      uploadImg: '', // user submitted image, to be displayed
+      returnAicUrl: '', // object holding the Lamda funtion returned data, as shown below
+      aicBlue: '', // AIC API returned blue , red, green values
+      aicRed: '',
+      aicGreen: '',
+      userGreen: '', // computed dominant color from uploaded image
+      userRed: '',
+      userBlue: '',
     };
-  },
+  }, // end data()
 
   mounted() {
     // set config and bucket name for AWS S3 upload app
@@ -41,7 +49,7 @@ export default {
         Bucket: this.bucketName,
       },
     });
-  },
+  }, // end mounted()
 
   methods: {
     submitFile() {
@@ -57,14 +65,15 @@ export default {
       } else {
         this.noneSelected = false;
         const file = pic[0]; // only upload one file
+        // TODO: fix upload preview
         const reader = new FileReader();
-        const output = document.getElementById('uploadImg');
+        // const output = document.getElementById('userImage');
 
-        // show the uploaded image
+        // loads image
         reader.addEventListener('load', (event) => {
-          output.src = event.target.result;
+          this.uploadImg = event.target.result;
         });
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file); // shows image
 
         const params = {
           Key: file.name,
@@ -110,11 +119,19 @@ export default {
         if (err) {
           console.log(err, err.stack);
         } else {
-          let result = JSON.parse(data.Messages[0].Body).Message;
-          console.log(JSON.parse(result));
-          result = JSON.parse(result).Input['aic colors'].url;
-
-          this.returnImgUrl = result;
+          const result = JSON.parse(JSON.parse(data.Messages[0].Body).Message).Input;
+          console.log(result);
+          // set data for prop values for children
+          // url of AIC color match
+          this.returnAicUrl = result['aic colors'].url;
+          // color of match
+          this.aicRed = result['aic colors'].red;
+          this.aicBlue = result['aic colors'].blue;
+          this.aicGreen = result['aic colors'].green;
+          // rgb computed from user uploaded image
+          this.userRed = result['user colors'].user_red;
+          this.userGreen = result['user colors'].user_green;
+          this.userBlue = result['user colors'].user_blue;
 
           // remove message from AWS SQS queue to help ensure correct message is received for next
           sqs.deleteMessage({
@@ -163,29 +180,42 @@ export default {
       :value="upProg"
     />
 
-    <div class="uploadStatus">
-      <p
+    <div class="upload-status">
+      <div
         v-if="success"
         class="success-upload">
         Upload Successful
-      </p>
-      <p
+      </div>
+      <div
         v-else-if="error"
         class="error">
         {{ uploadErrMessage }}
-      </p>
-      <p
+      </div>
+      <div
         v-else-if="noneSelected"
         class="error">
         Please select an image to upload
-      </p>
+      </div>
     </div>
 
     <div class="photo-container">
 
-      <UserImageCard :src="uploadImg" />
-
-      <ResultImageCard :aicimgurl="returnImgUrl" />
+      <ImageCard
+        cardtitle="Uploaded Image"
+        :src="uploadImg"
+        colortitle="Dominant Color of This Image"
+        :red="userRed"
+        :green="userGreen"
+        :blue="userBlue"
+      />
+      <ImageCard
+        cardtitle="AIC Match"
+        :src="returnAicUrl"
+        colortitle="Color Matched to AIC API"
+        :red="aicRed"
+        :green="aicGreen"
+        :blue="aicBlue"
+      />
 
     </div>
 
@@ -209,6 +239,10 @@ progress[value] {
   appearance: none;
   height: 20px;
   width: 250px;
+}
+
+.upload-status {
+  height: 2rem;
 }
 
 .success-upload {
