@@ -81,7 +81,7 @@ export default {
         <img
           :src="src"
           class="photo"
-          />
+        />
       </div>
     </div>
     <div class="color-title">
@@ -90,7 +90,7 @@ export default {
     <div
       class="color-swatch"
       :style="computedColor"
-      >
+    >
     </div>
     <div v-if="rgbloading">
       <PulseLoader
@@ -100,10 +100,10 @@ export default {
       />
     </div>
     <div v-else-if="red">
-    <!-- only need to test for one color value since all are computed simultaneously -->
-    <div class="rgb-value">
-      rgb({{ red }}, {{ green }}, {{ blue }})
-    </div>
+      <!-- only need to test for one color value since all are computed simultaneously -->
+      <div class="rgb-value">
+        rgb({{ red }}, {{ green }}, {{ blue }})
+      </div>
     </div>
   </div>
 </template>
@@ -138,7 +138,7 @@ export default {
 }
 
 .rgb-value {
-  margin: 0.5rem 0;
   font-size: 1.25rem;
+  margin: 0.5rem 0;
 }
 </style>

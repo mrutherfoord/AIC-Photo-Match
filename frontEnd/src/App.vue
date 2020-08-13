@@ -30,6 +30,10 @@ export default {
 </template>
 
 <style lang="scss">
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: #f0f0f0;
 }
