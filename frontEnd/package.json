@@ -13,7 +13,8 @@
     "stylelint": "^13.6.1",
     "stylelint-order": "^4.1.0",
     "stylelint-scss": "^3.18.0",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-spinner": "^1.0.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.4.6",
