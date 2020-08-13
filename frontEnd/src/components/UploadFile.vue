@@ -31,6 +31,7 @@ export default {
       userRed: '',
       userBlue: '',
       loading: false, // loading status for spinner
+      rgbLoading: false, // loading status for rgb color swatch and text
     };
   }, // end data()
 
@@ -92,6 +93,7 @@ export default {
             this.success = true;
             // show spinner
             this.loading = true;
+            this.rgbLoading = true;
             this.getResults();
           }
         })
@@ -123,6 +125,7 @@ export default {
           const result = JSON.parse(JSON.parse(data.Messages[0].Body).Message).Input;
           // stop spinner
           this.loading = false;
+          this.rgbLoading = false;
           console.log(result);
           // set data for prop values for children
           // url of AIC color match
@@ -177,17 +180,19 @@ export default {
       />
     </div>
 
-    <progress
-      id="showUpload"
-      max="100"
-      :value="upProg"
-    />
+    <div v-if="upProg >0 && upProg < 100">
+      <progress
+        id="showUpload"
+        max="100"
+        :value="upProg"
+      />
+    </div>
 
     <div class="upload-status">
       <div
         v-if="success"
         class="success-upload">
-        Upload Successful
+        <b>Upload Successful</b>
       </div>
       <div
         v-else-if="error"
@@ -210,15 +215,17 @@ export default {
         :red="userRed"
         :green="userGreen"
         :blue="userBlue"
+        :rgbloading="rgbLoading"
       />
       <ImageCard
         cardtitle="AIC Match"
         :src="returnAicUrl"
-        colortitle="Color Matched to AIC API"
+        colortitle="Nearest Color Matched to AIC API"
         :red="aicRed"
         :green="aicGreen"
         :blue="aicBlue"
         :imgloading="loading"
+        :rgbloading="rgbLoading"
       />
 
     </div>
@@ -238,8 +245,6 @@ export default {
 
 progress[value] {
   /* Reset the default appearance */
-  -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
   height: 20px;
   width: 250px;
