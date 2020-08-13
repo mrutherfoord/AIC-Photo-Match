@@ -1,11 +1,13 @@
 <script>
-import BounceLoader from 'vue-spinner/src/BounceLoader.vue';
+import ClipLoader from 'vue-spinner/src/ClipLoader.vue';
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 
 export default {
   name: 'ImageCard',
 
   components: {
-    BounceLoader,
+    ClipLoader,
+    PulseLoader,
   },
 
   props: {
@@ -37,6 +39,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    rgbloading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  data() {
+    return {
+      spinnerColor: '#2c3e50', // color for all loading spinners
+    };
   },
 
   computed: {
@@ -57,16 +69,20 @@ export default {
       {{ cardtitle }}
     </h2>
     <div class="img-container">
-      <div class="bounce-loader">
-        <BounceLoader
-          :loading="imgloading"
-          :color="'blue'"
+      <div v-if="imgloading">
+        <div class="bounce-loader">
+          <ClipLoader
+            :loading="imgloading"
+            :color="spinnerColor"
+          />
+        </div>
+      </div>
+      <div v-else>
+        <img
+          :src="src"
+          class="photo"
           />
       </div>
-      <img
-        :src="src"
-        class="photo"
-      />
     </div>
     <div class="color-title">
       {{ colortitle }}
@@ -74,12 +90,25 @@ export default {
     <div
       class="color-swatch"
       :style="computedColor"
-    >
+      >
+    </div>
+    <div v-if="rgbloading">
+      <PulseLoader
+        :loading="rgbloading"
+        :color="spinnerColor"
+        :size="'10px'"
+      />
+    </div>
+    <div v-else-if="red">
+    <!-- only need to test for one color value since all are computed simultaneously -->
+    <div class="rgb-value">
+      rgb({{ red }}, {{ green }}, {{ blue }})
+    </div>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .user-card {
   background-color: #fff;
   border-radius: 10px;
@@ -89,21 +118,27 @@ export default {
 }
 
 .img-container {
-  height: 300px;
+  max-height: 300px;
 }
 
 .bounce-loader {
-  display: flex;
-  justify-content: center;
   align-items: center;
+  display: flex;
+  height: 300px;
+  justify-content: center;
 }
 
 .photo {
-  max-height: 300px;
+  height: 300px;
   text-align: center;
 }
 
 .color-title {
   margin: 1rem 0;
+}
+
+.rgb-value {
+  margin: 0.5rem 0;
+  font-size: 1.25rem;
 }
 </style>

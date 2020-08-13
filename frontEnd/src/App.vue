@@ -19,8 +19,8 @@ export default {
       </h1>
       <p class="app-copy">
         This app will take an uploaded image, decipher the dominant color of that image, and match
-        it to a painting with the Art Institute of Chicago's API database that contains the dominant
-        color of the uploaded image within the artwork's top three dominant colors.
+        it to a painting with the Art Institute of Chicago's (AIC) API database that contains the
+        dominant color of the uploaded image within the artwork's top three dominant colors.
       </p>
 
       <UploadFile />
