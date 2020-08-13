@@ -180,29 +180,31 @@ export default {
       />
     </div>
 
-    <div v-if="upProg >0 && upProg < 100">
-      <progress
-        id="showUpload"
-        max="100"
-        :value="upProg"
-      />
-    </div>
+    <div class="upload-indication">
+      <div v-if="upProg >0 && upProg < 100">
+        <progress
+          id="showUpload"
+          max="100"
+          :value="upProg"
+        />
+      </div>
 
-    <div class="upload-status">
-      <div
-        v-if="success"
-        class="success-upload">
-        <b>Upload Successful</b>
-      </div>
-      <div
-        v-else-if="error"
-        class="error">
-        {{ uploadErrMessage }}
-      </div>
-      <div
-        v-else-if="noneSelected"
-        class="error">
-        Please select an image to upload
+      <div class="upload-status">
+        <div
+          v-if="success"
+          class="success-upload">
+          <b>Upload Successful</b>
+        </div>
+        <div
+          v-else-if="error"
+          class="error">
+          {{ uploadErrMessage }}
+        </div>
+        <div
+          v-else-if="noneSelected"
+          class="error">
+          Please select an image to upload
+        </div>
       </div>
     </div>
 
@@ -243,6 +245,10 @@ export default {
   padding: 10px;
 }
 
+.upload-indication {
+  min-height: 3rem;
+}
+
 progress[value] {
   /* Reset the default appearance */
   appearance: none;
@@ -251,7 +257,7 @@ progress[value] {
 }
 
 .upload-status {
-  height: 2rem;
+  margin: 0.5rem;
 }
 
 .success-upload {
