@@ -8,8 +8,6 @@ export default {
   name: 'UploadFile',
 
   components: {
-    // UserImageCard,
-    // ResultImageCard,
     ImageCard,
   },
 
@@ -32,6 +30,7 @@ export default {
       userGreen: '', // computed dominant color from uploaded image
       userRed: '',
       userBlue: '',
+      loading: false, // loading status for spinner
     };
   }, // end data()
 
@@ -91,6 +90,8 @@ export default {
             // a successful upload will trigger AWS Lambda functions watching this
             //  particular bucket; fetch result waiting for us from SQS
             this.success = true;
+            // show spinner
+            this.loading = true;
             this.getResults();
           }
         })
@@ -120,6 +121,8 @@ export default {
           console.log(err, err.stack);
         } else {
           const result = JSON.parse(JSON.parse(data.Messages[0].Body).Message).Input;
+          // stop spinner
+          this.loading = false;
           console.log(result);
           // set data for prop values for children
           // url of AIC color match
@@ -215,6 +218,7 @@ export default {
         :red="aicRed"
         :green="aicGreen"
         :blue="aicBlue"
+        :imgloading="loading"
       />
 
     </div>

@@ -1,6 +1,12 @@
 <script>
+import BounceLoader from 'vue-spinner/src/BounceLoader.vue';
+
 export default {
   name: 'ImageCard',
+
+  components: {
+    BounceLoader,
+  },
 
   props: {
     src: {
@@ -27,6 +33,10 @@ export default {
       type: String,
       default: '',
     },
+    imgloading: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
@@ -47,6 +57,12 @@ export default {
       {{ cardtitle }}
     </h2>
     <div class="img-container">
+      <div class="bounce-loader">
+        <BounceLoader
+          :loading="imgloading"
+          :color="'blue'"
+          />
+      </div>
       <img
         :src="src"
         class="photo"
@@ -74,6 +90,12 @@ export default {
 
 .img-container {
   height: 300px;
+}
+
+.bounce-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .photo {
