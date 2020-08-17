@@ -87,10 +87,16 @@ export default {
     <div class="color-title">
       {{ colortitle }}
     </div>
-    <div
-      class="color-swatch"
-      :style="computedColor"
-    >
+    <div v-if="red">
+      <!-- only need to test for one color value since all are computed simultaneously;
+         - only show if values so that old color swatches aren't present while a new one
+         - is being loaded
+         -->
+      <div
+        class="color-swatch"
+        :style="computedColor"
+      >
+      </div>
     </div>
     <div v-if="rgbloading">
       <PulseLoader

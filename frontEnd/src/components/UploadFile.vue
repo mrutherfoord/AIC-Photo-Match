@@ -15,9 +15,9 @@ export default {
     return {
       upProg: 0, // update progress html element
       success: false,
-      error: false,
-      noneSelected: false,
-      uploadErrMessage: '',
+      error: false, // conditional for v-if error display
+      errMessage: '', // generic placeholder for error messages
+      noneSelected: false, // check value for if an image file has been selected
       bucketName: 'bradley-test-bucket',
       bucketRegion: 'us-east-1',
       IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
@@ -30,7 +30,7 @@ export default {
       userGreen: '', // computed dominant color from uploaded image
       userRed: '',
       userBlue: '',
-      loading: false, // loading status for spinner
+      imgLoading: false, // loading status for return image spinner
       rgbLoading: false, // loading status for rgb color swatch and text
     };
   }, // end data()
@@ -53,9 +53,20 @@ export default {
 
   methods: {
     submitFile() {
-      // reset if there's an image
-      if (this.uploadImg !== '') {
+      // reset if there's a previous image submited
+      if (this.success === true) {
+        this.success = false;
+        // rest data values
+        this.returnAicUrl = '';
+        this.aicBlue = '';
+        this.aicRed = '';
+        this.aicGreen = '';
+        this.userRed = '';
+        this.userBlue = '';
+        this.userGreen = '';
         this.uploadImg = '';
+        this.error = false;
+        this.errMessage = '';
       }
 
       const pic = document.getElementById('fileUpload').files;
@@ -86,13 +97,13 @@ export default {
         this.s3.upload(params, (err) => {
           if (err) {
             this.error = true;
-            this.uploadErrMessage = `Upload Error: ${err}`;
+            this.errMessage = `Upload Error: ${err}`;
           } else {
             // a successful upload will trigger AWS Lambda functions watching this
             //  particular bucket; fetch result waiting for us from SQS
             this.success = true;
             // show spinner
-            this.loading = true;
+            this.imgLoading = true;
             this.rgbLoading = true;
             this.getResults();
           }
@@ -120,14 +131,15 @@ export default {
 
       sqs.receiveMessage(params, (err, data) => {
         if (err) {
-          console.log(err, err.stack);
-        } else {
+          this.error = true;
+          this.errMessage = `Error is retrieving data from SQS: ${err}`;
+        } else if (data.Messages.length !== 0) {
           const result = JSON.parse(JSON.parse(data.Messages[0].Body).Message).Input;
           // stop spinner
-          this.loading = false;
+          this.imgLoading = false;
           this.rgbLoading = false;
-          console.log(result);
-          // set data for prop values for children
+          // console.log(result);
+          // set data for prop values for children:
           // url of AIC color match
           this.returnAicUrl = result['aic colors'].url;
           // color of match
@@ -145,9 +157,16 @@ export default {
             ReceiptHandle: data.Messages[0].ReceiptHandle,
           }, (delErr) => {
             if (delErr) {
-              console.log(delErr);
+              this.error = true;
+              this.errMessage = 'Message in SQS queue has not been deleted!';
             }
           });
+        } else {
+          // message was returned from SQS, but empty
+          this.imgLoading = false;
+          this.rgbLoading = false;
+          this.error = true;
+          this.errMessage = 'Return data is empty!';
         }
       });
     },
@@ -174,13 +193,15 @@ export default {
 
     <div class="inputs">
       <input
-        id="submit"
+        id="submitImage"
         type="submit"
+        value="Submit Image"
         @click="submitFile"
       />
     </div>
 
     <div class="upload-indication">
+      <!-- only show progress bar whilst uploading -->
       <div v-if="upProg >0 && upProg < 100">
         <progress
           id="showUpload"
@@ -189,21 +210,22 @@ export default {
         />
       </div>
 
-      <div class="upload-status">
+      <div class="message-container">
         <div
           v-if="success"
           class="success-upload">
-          <b>Upload Successful</b>
-        </div>
-        <div
-          v-else-if="error"
-          class="error">
-          {{ uploadErrMessage }}
+          Upload Successful
         </div>
         <div
           v-else-if="noneSelected"
           class="error">
-          Please select an image to upload
+          Please select an image to upload.
+        </div>
+        <!-- placeholder for all error messages -->
+        <div
+          v-if="error"
+          class="error">
+          {{ errMessage }}
         </div>
       </div>
     </div>
@@ -226,7 +248,7 @@ export default {
         :red="aicRed"
         :green="aicGreen"
         :blue="aicBlue"
-        :imgloading="loading"
+        :imgloading="imgLoading"
         :rgbloading="rgbLoading"
       />
 
@@ -256,16 +278,18 @@ progress[value] {
   width: 250px;
 }
 
-.upload-status {
+.message-container {
   margin: 0.5rem;
 }
 
 .success-upload {
   color: green;
+  font-weight: bold;
 }
 
 .error {
   color: red;
+  font-weight: bolder;
 }
 
 .photo-container {
@@ -274,6 +298,7 @@ progress[value] {
   flex-direction: row;
   justify-content: space-evenly;
   margin: auto;
-  width: 80%;
+  max-width: 100%;
+  min-width: 80%;
 }
 </style>
