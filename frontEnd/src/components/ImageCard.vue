@@ -125,7 +125,7 @@ export default {
 }
 
 .img-container {
-  max-height: 300px;
+  min-height: 300px;
 }
 
 .bounce-loader {

@@ -187,50 +187,58 @@ export default {
       dominant color of the uploaded image within the artwork's top three dominant colors.
     </p>
 
-    <div class="inputs">
-      <label for="uploadbanner">
-        Upload Your Image
-      </label>
-      <input
-        id="fileUpload"
-        name="myfile"
-        type="file"
-        accept=".jpg, .jpeg, .png"
-        required
-      />
+    <div class="interaction-flex-container">
 
-      <input
-        id="submitImage"
-        type="submit"
-        value="Submit Image"
-        @click="submitFile"
-      />
-    </div>
+      <div class="inputs">
+        <label for="uploadbanner" class="file-button">
+          Upload Your Image <br>
+          <input
+            id="fileUpload"
+            class="file-button"
+            name="myfile"
+            type="file"
+            accept=".jpg, .jpeg, .png"
+            required
+          />
+        </label>
 
-    <div class="upload-indication">
-      <!-- only show progress bar whilst uploading -->
-      <div v-if="upProg >0 && upProg < 100">
-        <progress
-          id="showUpload"
-          max="100"
-          :value="upProg"
-        />
-      </div>
-
-      <div class="message-container">
-        <div
-          v-if="success"
-          class="success-upload">
-          Upload Successful
+        <div>
+          <input
+            id="submitImage"
+            class="submit-button"
+            type="submit"
+            value="Submit Image"
+            @click="submitFile"
+          />
         </div>
-        <!-- placeholder for all error messages -->
-        <div
-          v-if="error"
-          class="error-message">
-          {{ errMessage }}
+      </div><!-- inputs -->
+
+      <div class="upload-indication">
+        <!-- only show progress bar whilst uploading -->
+        <div v-if="upProg > 0">
+          <progress
+            id="showUpload"
+            max="100"
+            :value="upProg"
+          />
         </div>
-      </div>
-    </div><!-- upload-indication -->
+
+        <div class="message-container">
+          <div
+            v-if="success"
+            class="success-upload">
+            Upload Successful
+          </div>
+          <!-- placeholder for all error messages -->
+          <div
+            v-if="error"
+            class="error-message">
+            {{ errMessage }}
+          </div>
+        </div><!-- message-container -->
+      </div><!-- upload-indication -->
+
+    </div><!-- interaction-flex-container -->
 
     <div class="card-container">
 
@@ -271,12 +279,34 @@ export default {
   width: 50%;
 }
 
+.interaction-flex-container {
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  display: flex;
+  flex-direction: row;
+  align-items: space-evenly;
+  margin: 1rem auto;
+  width: 60%;
+}
+
 .inputs {
-  padding: 10px;
+  text-align: left;
+  width: 50%;
+  margin: 0.5rem;
+}
+
+.file-button {
+  margin: 0.5rem;
+}
+
+.submit-button {
+  margin: 0.5rem;
 }
 
 .upload-indication {
-  min-height: 3rem;
+  margin: 0.5rem;
+  width: 50%;
+  text-align: left;
 }
 
 progress[value] {
