@@ -13,19 +13,12 @@ export default {
   <div
     id="app"
     role="main">
-    <div class="page-lay">
-      <h1 class="title">
-        Art Institute of Chicago API Color Match App
-      </h1>
-      <p class="app-copy">
-        This app will take an uploaded image, decipher the dominant color of that image, and match
-        it to a painting with the Art Institute of Chicago's (AIC) API database that contains the
-        dominant color of the uploaded image within the artwork's top three dominant colors.
-      </p>
+    <h1 class="title">
+      Art Institute of Chicago API Color Match App
+    </h1>
 
-      <UploadFile />
+    <UploadFile />
 
-    </div><!-- pageLay -->
   </div><!-- main -->
 </template>
 
@@ -43,16 +36,8 @@ body {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin-top: 60px;
+  margin-top: 20px;
   text-align: center;
 }
 
-.app-copy {
-  margin: auto;
-  width: 50%;
-}
-
-.page-lay {
-  margin: auto;
-}
 </style>

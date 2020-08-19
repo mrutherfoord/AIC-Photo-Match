@@ -27,7 +27,7 @@ export default {
       aicBlue: '', // AIC API returned blue , red, green values
       aicRed: '',
       aicGreen: '',
-      userGreen: '', // computed dominant color from uploaded image
+      userGreen: '', // computed dominant rgb colors from uploaded image
       userRed: '',
       userBlue: '',
       imgLoading: false, // loading status for return image spinner
@@ -71,19 +71,22 @@ export default {
 
       const pic = document.getElementById('fileUpload').files;
 
-      if (pic.length === 0 || pic.length > 1) {
-        this.noneSelected = true; // for resetting
+      if (pic.length === 0) {
+        this.error = true;
+        this.errMessage = 'Please select an image to upload';
       } else {
-        this.noneSelected = false;
-        const file = pic[0]; // only upload one file
-        // TODO: fix upload preview
-        const reader = new FileReader();
-        // const output = document.getElementById('userImage');
+        // clear any previous error on new file submission
+        if (this.error) {
+          this.error = false;
+          this.errMessage = '';
+        }
 
-        // loads image
+        const file = pic[0]; // only upload one file
+        const reader = new FileReader();
+
         reader.addEventListener('load', (event) => {
           this.uploadImg = event.target.result;
-        });
+        }); // loads image
         reader.readAsDataURL(file); // shows image
 
         const params = {
@@ -178,6 +181,12 @@ export default {
 <template>
   <div class="upload">
 
+    <p class="app-copy">
+      This app will take an uploaded image, decipher the dominant color of that image, and match
+      it to a painting with the Art Institute of Chicago's (AIC) API database that contains the
+      dominant color of the uploaded image within the artwork's top three dominant colors.
+    </p>
+
     <div class="inputs">
       <label for="uploadbanner">
         Upload Your Image
@@ -189,9 +198,7 @@ export default {
         accept=".jpg, .jpeg, .png"
         required
       />
-    </div>
 
-    <div class="inputs">
       <input
         id="submitImage"
         type="submit"
@@ -216,26 +223,21 @@ export default {
           class="success-upload">
           Upload Successful
         </div>
-        <div
-          v-else-if="noneSelected"
-          class="error">
-          Please select an image to upload.
-        </div>
         <!-- placeholder for all error messages -->
         <div
           v-if="error"
-          class="error">
+          class="error-message">
           {{ errMessage }}
         </div>
       </div>
-    </div>
+    </div><!-- upload-indication -->
 
-    <div class="photo-container">
+    <div class="card-container">
 
       <ImageCard
         cardtitle="Uploaded Image"
-        :src="uploadImg"
         colortitle="Dominant Color of This Image"
+        :src="uploadImg"
         :red="userRed"
         :green="userGreen"
         :blue="userBlue"
@@ -243,8 +245,8 @@ export default {
       />
       <ImageCard
         cardtitle="AIC Match"
-        :src="returnAicUrl"
         colortitle="Nearest Color Matched to AIC API"
+        :src="returnAicUrl"
         :red="aicRed"
         :green="aicGreen"
         :blue="aicBlue"
@@ -261,6 +263,12 @@ export default {
 .upload {
   margin: auto;
   text-align: center;
+}
+
+.app-copy {
+  margin: auto;
+  text-align: left;
+  width: 50%;
 }
 
 .inputs {
@@ -287,12 +295,12 @@ progress[value] {
   font-weight: bold;
 }
 
-.error {
+.error-message {
   color: red;
   font-weight: bolder;
 }
 
-.photo-container {
+.card-container {
   align-content: center;
   display: flex;
   flex-direction: row;
