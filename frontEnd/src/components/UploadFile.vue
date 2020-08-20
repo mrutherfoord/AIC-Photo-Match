@@ -144,15 +144,15 @@ export default {
           // console.log(result);
           // set data for prop values for children:
           // url of AIC color match
-          this.returnAicUrl = result['aic colors'].url;
+          this.returnAicUrl = result.aic_colors.url;
           // color of match
-          this.aicRed = result['aic colors'].red;
-          this.aicBlue = result['aic colors'].blue;
-          this.aicGreen = result['aic colors'].green;
+          this.aicRed = result.aic_colors.red;
+          this.aicBlue = result.aic_colors.blue;
+          this.aicGreen = result.aic_colors.green;
           // rgb computed from user uploaded image
-          this.userRed = result['user colors'].user_red;
-          this.userGreen = result['user colors'].user_green;
-          this.userBlue = result['user colors'].user_blue;
+          this.userRed = result.user_colors.user_red;
+          this.userGreen = result.user_colors.user_green;
+          this.userBlue = result.user_colors.user_blue;
 
           // remove message from AWS SQS queue to help ensure correct message is received for next
           sqs.deleteMessage({
@@ -190,7 +190,10 @@ export default {
     <div class="interaction-flex-container">
 
       <div class="inputs">
-        <label for="uploadbanner" class="file-button">
+        <label
+          for="uploadbanner"
+          class="file-button"
+        >
           Upload Your Image <br>
           <input
             id="fileUpload"
