@@ -24,12 +24,12 @@ export default {
       s3: null, // placeholder for configured aws S3 bucket
       uploadImg: '', // user submitted image, to be displayed
       returnAicUrl: '', // object holding the Lamda funtion returned data, as shown below
-      aicBlue: '', // AIC API returned blue , red, green values
-      aicRed: '',
-      aicGreen: '',
-      userGreen: '', // computed dominant rgb colors from uploaded image
-      userRed: '',
-      userBlue: '',
+      aicBlue: null, // AIC API returned blue , red, green values
+      aicRed: null,
+      aicGreen: null,
+      userGreen: null, // computed dominant rgb colors from uploaded image
+      userRed: null,
+      userBlue: null,
       imgLoading: false, // loading status for return image spinner
       rgbLoading: false, // loading status for rgb color swatch and text
     };
@@ -58,13 +58,13 @@ export default {
         this.success = false;
         // rest data values
         this.returnAicUrl = '';
-        this.aicBlue = '';
-        this.aicRed = '';
-        this.aicGreen = '';
-        this.userRed = '';
-        this.userBlue = '';
-        this.userGreen = '';
-        this.uploadImg = '';
+        this.aicBlue = null;
+        this.aicRed = null;
+        this.aicGreen = null;
+        this.userRed = null;
+        this.userBlue = null;
+        this.userGreen = null;
+        this.uploadImg = null;
         this.error = false;
         this.errMessage = '';
       }
