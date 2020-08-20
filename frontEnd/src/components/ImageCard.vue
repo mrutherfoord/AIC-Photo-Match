@@ -24,16 +24,16 @@ export default {
       default: '',
     },
     red: {
-      type: String,
-      default: '',
+      type: Number,
+      default: null,
     },
     green: {
-      type: String,
-      default: '',
+      type: Number,
+      default: null,
     },
     blue: {
-      type: String,
-      default: '',
+      type: Number,
+      default: null,
     },
     imgloading: {
       type: Boolean,
