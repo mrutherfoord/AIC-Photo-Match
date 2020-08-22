@@ -14,22 +14,22 @@ export default {
   data() {
     return {
       upProg: 0, // update progress html element
-      success: false,
+      success: false, // status of full upload to S3 bucket
       error: false, // conditional for v-if error display
       errMessage: '', // generic placeholder for error messages
       noneSelected: false, // check value for if an image file has been selected
       bucketName: 'bradley-test-bucket',
       bucketRegion: 'us-east-1',
       IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
-      s3: null, // placeholder for configured aws S3 bucket
+      s3: null, // placeholder for configured aws S3 bucket object
       uploadImg: '', // user submitted image, to be displayed
       returnAicUrl: '', // object holding the Lamda funtion returned data, as shown below
-      aicBlue: null, // AIC API returned blue , red, green values
-      aicRed: null,
-      aicGreen: null,
-      userGreen: null, // computed dominant rgb colors from uploaded image
-      userRed: null,
-      userBlue: null,
+      aicBlue: undefined, // AIC API returned blue , red, green values
+      aicRed: undefined,
+      aicGreen: undefined,
+      userGreen: undefined, // computed dominant rgb colors from uploaded image
+      userRed: undefined,
+      userBlue: undefined,
       imgLoading: false, // loading status for return image spinner
       rgbLoading: false, // loading status for rgb color swatch and text
     };
@@ -58,13 +58,13 @@ export default {
         this.success = false;
         // rest data values
         this.returnAicUrl = '';
-        this.aicBlue = null;
-        this.aicRed = null;
-        this.aicGreen = null;
-        this.userRed = null;
-        this.userBlue = null;
-        this.userGreen = null;
-        this.uploadImg = null;
+        this.aicBlue = undefined;
+        this.aicRed = undefined;
+        this.aicGreen = undefined;
+        this.userRed = undefined;
+        this.userBlue = undefined;
+        this.userGreen = undefined;
+        this.uploadImg = undefined;
         this.error = false;
         this.errMessage = '';
       }
@@ -190,19 +190,16 @@ export default {
     <div class="interaction-flex-container">
 
       <div class="inputs">
-        <label
-          for="uploadbanner"
+        <input
+          id="fileUpload"
           class="file-button"
-        >
-          Upload Your Image <br>
-          <input
-            id="fileUpload"
-            class="file-button"
-            name="myfile"
-            type="file"
-            accept=".jpg, .jpeg, .png"
-            required
-          />
+          name="myfile"
+          type="file"
+          accept=".jpg, .jpeg, .png"
+          required
+        />
+        <label for="fileUpload">
+          SELECT YOUR IMAGE
         </label>
 
         <div>
@@ -210,14 +207,14 @@ export default {
             id="submitImage"
             class="submit-button"
             type="submit"
-            value="Submit Image"
+            value="SUMBIT IMAGE"
             @click="submitFile"
           />
         </div>
       </div><!-- inputs -->
 
       <div class="upload-indication">
-        <!-- only show progress bar whilst uploading -->
+        <!-- only show progress bar whilst uploading,  but keep it displayed even if error -->
         <div v-if="upProg > 0">
           <progress
             id="showUpload"
@@ -271,12 +268,18 @@ export default {
 </template>
 
 <style scoped lang="scss">
+$progress-fill: #1976d2;
+$success-green: #388e3c;
+$error-red: #d32f2f;
+
 .upload {
   margin: auto;
   text-align: center;
 }
 
 .app-copy {
+  font-family: 'Times New Roman', Times, Georgia, serif;
+  font-weight: 400;
   margin: auto;
   text-align: left;
   width: 50%;
@@ -293,17 +296,83 @@ export default {
 }
 
 .inputs {
+  margin: 0.5rem;
   text-align: left;
   width: 50%;
-  margin: 0.5rem;
 }
 
-.file-button {
-  margin: 0.5rem;
+/*
+ * file input sytling per https://www.benmarshall.me/styling-file-inputs/
+ * claims to be optimized, semantic, and accessible
+ */
+[type="file"] {
+  // hides the default input UI
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute !important;
+  white-space: nowrap;
+  width: 1px;
+
+  + label {
+    // File upload button styles
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    border-radius: 5px;
+    display: inline-block;
+    font-size: 1rem;
+    height: 2.5rem;
+    width: 13rem;
+    text-align: center;
+    // line-height: 2.75rem;
+    padding-top: 0.7rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin: 0.5rem;
+    transition: background-color 0.3s;
+  }
+
+  &:focus + label,
+  + label:hover {
+    // File upload hover state button styles
+    background-color: white;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  }
+
+  &:active + label,
+  + label:active {
+    // button press transition
+    background-color: white;
+    box-shadow: none;
+  }
+
+  &:focus + label {
+    // File upload focus state button styles
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 1px;
+  }
 }
 
 .submit-button {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  border-radius: 5px;
+  border-style: none;
+  font-size: 1rem;
+  height: 2.5rem;
+  width: 13rem;
   margin: 0.5rem;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: white;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  }
+
+  &:active {
+    background-color: white;
+    box-shadow: none;
+  }
 }
 
 .upload-indication {
@@ -315,22 +384,22 @@ export default {
 progress[value] {
   /* Reset the default appearance */
   appearance: none;
-  height: 20px;
-  width: 250px;
-}
-
-.message-container {
-  margin: 0.5rem;
+  border-radius: 5px;
+  margin: 0.5rem 0 0.2rem 0.4rem;
+  height: 1.5rem;
+  width: 9.5rem;
 }
 
 .success-upload {
-  color: green;
+  color: $success-green;
   font-weight: bold;
+  margin-left: 0.5rem;
 }
 
 .error-message {
-  color: red;
+  color: $error-red;
   font-weight: bolder;
+  margin: 1rem 0 0 0.5rem;
 }
 
 .card-container {

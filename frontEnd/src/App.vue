@@ -32,12 +32,16 @@ body {
 }
 
 #app {
-  color: #2c3e50;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  color: #424242;
+  font-family: Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin-top: 20px;
   text-align: center;
+}
+
+.title {
+  font-weight: 400;
 }
 
 </style>
