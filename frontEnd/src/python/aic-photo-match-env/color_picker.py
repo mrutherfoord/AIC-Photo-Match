@@ -62,10 +62,10 @@ def color_match(event):
     return {
         "aic colors" :
         {
-            "red" : int(neighborsred[0]),
-            "green" : int(neighborsgreen[0]),
-            "blue" : int(neighborsblue[0]),
-            "url" : str(match_url[0])
+            "red" : neighborsred[0],
+            "green" : neighborsgreen[0],
+            "blue" : neighborsblue[0],
+            "url" : match_url[0]
         },
         "user colors" :
         {

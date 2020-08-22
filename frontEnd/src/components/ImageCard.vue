@@ -25,15 +25,15 @@ export default {
     },
     red: {
       type: Number,
-      default: null,
+      default: undefined,
     },
     green: {
       type: Number,
-      default: null,
+      default: undefined,
     },
     blue: {
       type: Number,
-      default: null,
+      default: undefined,
     },
     imgloading: {
       type: Boolean,
@@ -122,6 +122,10 @@ export default {
   max-height: 800px;
   min-height: 500px;
   min-width: 400px;
+}
+
+.card-title {
+  font-weight: 300;
 }
 
 .img-container {
