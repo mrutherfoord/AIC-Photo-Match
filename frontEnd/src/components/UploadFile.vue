@@ -271,6 +271,7 @@ export default {
 $progress-fill: #1976d2;
 $success-green: #388e3c;
 $error-red: #d32f2f;
+$responsive-width: 599px;
 
 .upload {
   margin: auto;
@@ -279,10 +280,14 @@ $error-red: #d32f2f;
 
 .app-copy {
   font-family: 'Times New Roman', Times, Georgia, serif;
-  font-weight: 400;
+  font-size: 1.2rem;
   margin: auto;
   text-align: left;
-  width: 50%;
+  width: 40%;
+
+  @media only screen and (max-width: $responsive-width) {
+    width: 90%;
+  }
 }
 
 .interaction-flex-container {
@@ -292,13 +297,24 @@ $error-red: #d32f2f;
   flex-direction: row;
   align-items: space-evenly;
   margin: 1rem auto;
-  width: 60%;
+  width: 70%;
+
+  @media only screen and (max-width: $responsive-width) {
+    width: 100%;
+    flex-direction: column;
+    height: 16rem;
+  }
 }
 
 .inputs {
   margin: 0.5rem;
   text-align: left;
   width: 50%;
+
+  @media only screen and (max-width: $responsive-width) {
+    text-align: center;
+    width: 100%;
+  }
 }
 
 /*
@@ -325,7 +341,6 @@ $error-red: #d32f2f;
     height: 2.5rem;
     width: 13rem;
     text-align: center;
-    // line-height: 2.75rem;
     padding-top: 0.7rem;
     padding-left: 1rem;
     padding-right: 1rem;
@@ -377,8 +392,13 @@ $error-red: #d32f2f;
 
 .upload-indication {
   margin: 0.5rem;
-  width: 50%;
   text-align: left;
+  width: 50%;
+
+  @media only screen and (max-width: $responsive-width) {
+    text-align: center;
+    width: 100%;
+  }
 }
 
 progress[value] {
@@ -387,7 +407,7 @@ progress[value] {
   border-radius: 5px;
   margin: 0.5rem 0 0.2rem 0.4rem;
   height: 1.5rem;
-  width: 9.5rem;
+  width: 80%;
 }
 
 .success-upload {
@@ -406,9 +426,7 @@ progress[value] {
   align-content: center;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
-  margin: auto;
-  max-width: 100%;
-  min-width: 80%;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 </style>

@@ -115,13 +115,20 @@ export default {
 </template>
 
 <style scoped lang="scss">
+$responsive-width: 599px;
+
 .user-card {
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   max-height: 800px;
+  margin: 0.5rem 1rem 0.5rem 1rem;
   min-height: 500px;
   min-width: 400px;
+
+  @media only screen and (max-width: $responsive-width) {
+    min-width: 100%;
+  }
 }
 
 .card-title {
@@ -141,7 +148,9 @@ export default {
 
 .photo {
   height: 300px;
+  max-width: 100%;
   text-align: center;
+  object-fit: contain;
 }
 
 .color-title {
