@@ -291,18 +291,18 @@ $responsive-width: 599px;
 }
 
 .interaction-flex-container {
+  align-items: space-evenly;
   border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   display: flex;
   flex-direction: row;
-  align-items: space-evenly;
   margin: 1rem auto;
-  width: 70%;
+  width: 50%;
 
   @media only screen and (max-width: $responsive-width) {
-    width: 100%;
     flex-direction: column;
     height: 16rem;
+    width: 100%;
   }
 }
 
@@ -333,26 +333,26 @@ $responsive-width: 599px;
   width: 1px;
 
   + label {
-    // File upload button styles
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     border-radius: 5px;
+    // File upload button styles
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     display: inline-block;
     font-size: 1rem;
     height: 2.5rem;
-    width: 13rem;
-    text-align: center;
-    padding-top: 0.7rem;
+    margin: 0.5rem;
     padding-left: 1rem;
     padding-right: 1rem;
-    margin: 0.5rem;
+    padding-top: 0.7rem;
+    text-align: center;
     transition: background-color 0.3s;
+    width: 13rem;
   }
 
   &:focus + label,
   + label:hover {
     // File upload hover state button styles
     background-color: white;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   }
 
   &:active + label,
@@ -370,18 +370,18 @@ $responsive-width: 599px;
 }
 
 .submit-button {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   border-radius: 5px;
   border-style: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   font-size: 1rem;
   height: 2.5rem;
-  width: 13rem;
   margin: 0.5rem;
   transition: background-color 0.3s;
+  width: 13rem;
 
   &:hover {
     background-color: white;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   }
 
   &:active {
@@ -405,8 +405,8 @@ progress[value] {
   /* Reset the default appearance */
   appearance: none;
   border-radius: 5px;
-  margin: 0.5rem 0 0.2rem 0.4rem;
   height: 1.5rem;
+  margin: 0.5rem 0 0.2rem 0.4rem;
   width: 80%;
 }
 
