@@ -1,7 +1,5 @@
 <script>
 import AWS from 'aws-sdk';
-// import UserImageCard from './UserImageCard.vue';
-// import ResultImageCard from './ResultImageCard.vue';
 import ImageCard from './ImageCard.vue';
 
 export default {
@@ -18,12 +16,14 @@ export default {
       error: false, // conditional for v-if error display
       errMessage: '', // generic placeholder for error messages
       noneSelected: false, // check value for if an image file has been selected
-      bucketName: 'bradley-test-bucket',
+      bucketName: 'bradley-test-bucket', // S3 values for configuration
       bucketRegion: 'us-east-1',
       IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
       s3: null, // placeholder for configured aws S3 bucket object
       uploadImg: '', // user submitted image, to be displayed
-      returnAicUrl: '', // object holding the Lamda funtion returned data, as shown below
+      uploadFile: undefined, // user file to be uploaded
+      fileName: '', // file name of upload image to display
+      returnAicUrl: '', // object holding the Lamda function returned data, as shown below
       aicBlue: undefined, // AIC API returned blue , red, green values
       aicRed: undefined,
       aicGreen: undefined,
@@ -52,10 +52,15 @@ export default {
   }, // end mounted()
 
   methods: {
-    submitFile() {
+    fileLoad() {
       // reset if there's a previous image submited
       if (this.success === true) {
         this.success = false;
+        // reset any chosen file to upload, including name
+        this.uploadFile = undefined;
+        this.fileName = '';
+        // reset progress bar
+        this.upProg = 0;
         // rest data values
         this.returnAicUrl = '';
         this.aicBlue = undefined;
@@ -69,9 +74,31 @@ export default {
         this.errMessage = '';
       }
 
-      const pic = document.getElementById('fileUpload').files;
+      document.getElementById('fileUpload').onchange = () => {
+        // read file
+        const pic = document.getElementById('fileUpload').files;
+        // display file name on selection
+        this.fileName = pic[0].name;
 
-      if (pic.length === 0) {
+        [this.uploadFile] = pic; // only upload one file, destructured approach
+
+        // get info on image and display
+        const reader = new FileReader();
+        if (reader.onerror) {
+          this.error = true;
+          this.errMessage = FileReader.error;
+        } else {
+          reader.onload = (event) => {
+            this.uploadImg = event.target.result;
+          }; // loads image
+          reader.readAsDataURL(this.uploadFile); // shows image
+        }
+      };
+    },
+
+    submitFile() {
+      // check to see if a file has been chosen for upload
+      if (!this.uploadFile) {
         this.error = true;
         this.errMessage = 'Please select an image to upload';
       } else {
@@ -80,19 +107,10 @@ export default {
           this.error = false;
           this.errMessage = '';
         }
-
-        const file = pic[0]; // only upload one file
-        const reader = new FileReader();
-
-        reader.addEventListener('load', (event) => {
-          this.uploadImg = event.target.result;
-        }); // loads image
-        reader.readAsDataURL(file); // shows image
-
         const params = {
-          Key: file.name,
-          ContentType: file.type,
-          Body: file,
+          Key: this.uploadFile.name,
+          ContentType: this.uploadFile.type,
+          Body: this.uploadFile,
           ACL: 'public-read',
         };
 
@@ -108,10 +126,11 @@ export default {
             // show spinner
             this.imgLoading = true;
             this.rgbLoading = true;
+            // fetch results from Lamda trigger and SQS message
             this.getResults();
           }
         })
-          // show upload progress
+          // show upload progress via html progress element
           .on('httpUploadProgress', (evt) => {
             this.upProg = parseInt(((evt.loaded * 100) / evt.total), 10);
           });
@@ -119,6 +138,7 @@ export default {
     },
 
     getResults() {
+      // method called by submitFile() to fetch results via AWS SQS
       const sqs = new AWS.SQS({
         apiVersion: '2012-11-05',
         maxRetries: 3,
@@ -196,11 +216,15 @@ export default {
           name="myfile"
           type="file"
           accept=".jpg, .jpeg, .png"
-          required
+          @click="fileLoad"
         />
         <label for="fileUpload">
           SELECT YOUR IMAGE
         </label>
+
+        <div class="file-name">
+          {{ fileName }}
+        </div>
 
         <div>
           <input
@@ -283,7 +307,7 @@ $responsive-width: 599px;
   font-size: 1.2rem;
   margin: auto;
   text-align: left;
-  width: 40%;
+  width: 40rem;
 
   @media only screen and (max-width: $responsive-width) {
     width: 90%;
@@ -297,7 +321,7 @@ $responsive-width: 599px;
   display: flex;
   flex-direction: row;
   margin: 1rem auto;
-  width: 50%;
+  width: 50rem;
 
   @media only screen and (max-width: $responsive-width) {
     flex-direction: column;
@@ -318,7 +342,7 @@ $responsive-width: 599px;
 }
 
 /*
- * file input sytling per https://www.benmarshall.me/styling-file-inputs/
+ * file input styling per https://www.benmarshall.me/styling-file-inputs/
  * claims to be optimized, semantic, and accessible
  */
 [type="file"] {
@@ -367,6 +391,14 @@ $responsive-width: 599px;
     outline: 1px dotted #000;
     outline: -webkit-focus-ring-color auto 1px;
   }
+}
+
+.file-name {
+  height: 1.2rem;
+  margin:  0.5rem 0.5rem 0.5rem 1.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 20rem;
 }
 
 .submit-button {
