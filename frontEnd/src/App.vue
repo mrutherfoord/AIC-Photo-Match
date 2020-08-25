@@ -12,7 +12,8 @@ export default {
 <template>
   <div
     id="app"
-    role="main">
+    role="main"
+  >
     <h1 class="title">
       Art Institute of Chicago API Color Match App
     </h1>

@@ -16,9 +16,6 @@ export default {
       error: false, // conditional for v-if error display
       errMessage: '', // generic placeholder for error messages
       noneSelected: false, // check value for if an image file has been selected
-      bucketName: 'bradley-test-bucket', // S3 values for configuration
-      bucketRegion: 'us-east-1',
-      IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
       s3: null, // placeholder for configured aws S3 bucket object
       uploadImg: '', // user submitted image, to be displayed
       uploadFile: undefined, // user file to be uploaded
@@ -38,16 +35,21 @@ export default {
   mounted() {
     // set config and bucket name for AWS S3 upload app
     AWS.config.update({
-      region: this.bucketRegion,
+      region: 'us-east-1',
       credentials: new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: this.IdentityPoolId,
+        IdentityPoolId: 'us-east-1:fafe5de1-71f5-4c79-a9c8-6e09e0f650b2',
       }),
     });
 
     this.s3 = new AWS.S3({
       params: {
-        Bucket: this.bucketName,
+        Bucket: 'bradley-test-bucket',
       },
+    }, (err) => {
+      if (err) {
+        this.error = true;
+        this.errMessage = `Error configuring S3 bucket: ${err}`;
+      }
     });
   }, // end mounted()
 
@@ -155,21 +157,19 @@ export default {
       sqs.receiveMessage(params, (err, data) => {
         if (err) {
           this.error = true;
-          this.errMessage = `Error is retrieving data from SQS: ${err}`;
+          this.errMessage = `Error in retrieving data from SQS: ${err}`;
         } else if (data.Messages.length !== 0) {
           const result = JSON.parse(JSON.parse(data.Messages[0].Body).Message).Input;
           // stop spinner
           this.imgLoading = false;
           this.rgbLoading = false;
-          // console.log(result);
           // set data for prop values for children:
-          // url of AIC color match
-          this.returnAicUrl = result.aic_colors.url;
-          // color of match
+          this.returnAicUrl = result.aic_colors.url; // url of AIC color match
+          // color of match:
           this.aicRed = result.aic_colors.red;
           this.aicBlue = result.aic_colors.blue;
           this.aicGreen = result.aic_colors.green;
-          // rgb computed from user uploaded image
+          // rgb computed from user uploaded image:
           this.userRed = result.user_colors.user_red;
           this.userGreen = result.user_colors.user_green;
           this.userBlue = result.user_colors.user_blue;
@@ -295,7 +295,7 @@ export default {
 $progress-fill: #1976d2;
 $success-green: #388e3c;
 $error-red: #d32f2f;
-$responsive-width: 599px;
+$responsive-width: 599px; // phone responsive breakpoint
 
 .upload {
   margin: auto;
@@ -375,14 +375,14 @@ $responsive-width: 599px;
   &:focus + label,
   + label:hover {
     // File upload hover state button styles
-    background-color: white;
+    background-color: #fff;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   }
 
   &:active + label,
   + label:active {
     // button press transition
-    background-color: white;
+    background-color: #fff;
     box-shadow: none;
   }
 
@@ -412,12 +412,12 @@ $responsive-width: 599px;
   width: 13rem;
 
   &:hover {
-    background-color: white;
+    background-color: #fff;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   }
 
   &:active {
-    background-color: white;
+    background-color: #fff;
     box-shadow: none;
   }
 }
