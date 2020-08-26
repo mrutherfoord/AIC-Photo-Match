@@ -13,7 +13,6 @@ export default {
     return {
       upProg: 0, // update progress html element
       success: false, // status of full upload to S3 bucket
-      error: false, // conditional for v-if error display
       errMessage: '', // generic placeholder for error messages
       noneSelected: false, // check value for if an image file has been selected
       s3: null, // placeholder for configured aws S3 bucket object
@@ -46,10 +45,7 @@ export default {
         Bucket: 'bradley-test-bucket',
       },
     }, (err) => {
-      if (err) {
-        this.error = true;
-        this.errMessage = `Error configuring S3 bucket: ${err}`;
-      }
+      if (err) this.errMessage = `Error configuring S3 bucket: ${err}`;
     });
   }, // end mounted()
 
@@ -72,12 +68,11 @@ export default {
         this.userBlue = undefined;
         this.userGreen = undefined;
         this.uploadImg = undefined;
-        this.error = false;
         this.errMessage = '';
       }
 
       document.getElementById('fileUpload').onchange = () => {
-        // read file
+        // read fil and display in #fileUpload div
         const pic = document.getElementById('fileUpload').files;
         // display file name on selection
         this.fileName = pic[0].name;
@@ -87,7 +82,6 @@ export default {
         // get info on image and display
         const reader = new FileReader();
         if (reader.onerror) {
-          this.error = true;
           this.errMessage = FileReader.error;
         } else {
           reader.onload = (event) => {
@@ -101,14 +95,11 @@ export default {
     submitFile() {
       // check to see if a file has been chosen for upload
       if (!this.uploadFile) {
-        this.error = true;
         this.errMessage = 'Please select an image to upload';
       } else {
         // clear any previous error on new file submission
-        if (this.error) {
-          this.error = false;
-          this.errMessage = '';
-        }
+        if (this.errMessage !== '') this.errMessage = '';
+
         const params = {
           Key: this.uploadFile.name,
           ContentType: this.uploadFile.type,
@@ -119,7 +110,6 @@ export default {
         // upload image to be save in S3 bucket
         this.s3.upload(params, (err) => {
           if (err) {
-            this.error = true;
             this.errMessage = `Upload Error: ${err}`;
           } else {
             // a successful upload will trigger AWS Lambda functions watching this
@@ -144,6 +134,8 @@ export default {
       const sqs = new AWS.SQS({
         apiVersion: '2012-11-05',
         maxRetries: 3,
+      }, (err) => {
+        if (err) this.errMessage = `Error in sending SQS request: ${err}`;
       });
       const params = {
         QueueUrl: 'https://sqs.us-east-1.amazonaws.com/145918816538/AIC_SNS',
@@ -151,18 +143,17 @@ export default {
         MaxNumberOfMessages: '1',
         MessageAttributeNames: ['*'],
         VisibilityTimeout: 60, // in seconds
-        WaitTimeSeconds: 20, // in seconds
+        WaitTimeSeconds: 18, // in seconds, max 20
       };
 
       sqs.receiveMessage(params, (err, data) => {
         if (err) {
-          this.error = true;
           this.errMessage = `Error in retrieving data from SQS: ${err}`;
         } else if (data.Messages.length !== 0) {
           const result = JSON.parse(JSON.parse(data.Messages[0].Body).Message).Input;
           // stop spinner
-          this.imgLoading = false;
           this.rgbLoading = false;
+          this.imgLoading = false;
           // set data for prop values for children:
           this.returnAicUrl = result.aic_colors.url; // url of AIC color match
           // color of match:
@@ -179,16 +170,12 @@ export default {
             QueueUrl: 'https://sqs.us-east-1.amazonaws.com/145918816538/AIC_SNS',
             ReceiptHandle: data.Messages[0].ReceiptHandle,
           }, (delErr) => {
-            if (delErr) {
-              this.error = true;
-              this.errMessage = 'Message in SQS queue has not been deleted!';
-            }
+            if (delErr) this.errMessage = 'Message in SQS queue has not been deleted!';
           });
         } else {
           // message was returned from SQS, but empty
           this.imgLoading = false;
           this.rgbLoading = false;
-          this.error = true;
           this.errMessage = 'Return data is empty!';
         }
       });
@@ -255,7 +242,7 @@ export default {
           </div>
           <!-- placeholder for all error messages -->
           <div
-            v-if="error"
+            v-if="errMessage !== ''"
             class="error-message">
             {{ errMessage }}
           </div>
