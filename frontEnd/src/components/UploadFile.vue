@@ -51,6 +51,8 @@ export default {
 
   methods: {
     fileLoad() {
+      // Called when user clicks the #fileUpload button.
+
       // reset if there's a previous image submited
       if (this.success === true) {
         this.success = false;
@@ -69,10 +71,12 @@ export default {
         this.userGreen = undefined;
         this.uploadImg = undefined;
         this.errMessage = '';
+        // reenable 'Submit Image' button on new file select
+        document.getElementById('submitImage').disabled = false;
       }
 
       document.getElementById('fileUpload').onchange = () => {
-        // read fil and display in #fileUpload div
+        // read fil and display in the generated card
         const pic = document.getElementById('fileUpload').files;
         // display file name on selection
         this.fileName = pic[0].name;
@@ -85,21 +89,27 @@ export default {
           this.errMessage = FileReader.error;
         } else {
           reader.onload = (event) => {
-            this.uploadImg = event.target.result;
-          }; // loads image
+            this.uploadImg = event.target.result; // loads image
+          };
           reader.readAsDataURL(this.uploadFile); // shows image
         }
       };
     },
 
     submitFile() {
+      // Called when user clicks 'Submit Image' button
+
       // check to see if a file has been chosen for upload
       if (!this.uploadFile) {
         this.errMessage = 'Please select an image to upload';
       } else {
+        // disable button while image is uploading to prevent concurrent uploads
+        document.getElementById('submitImage').disabled = true;
+
         // clear any previous error on new file submission
         if (this.errMessage !== '') this.errMessage = '';
 
+        // parameters for file information for the S3 bucket upload
         const params = {
           Key: this.uploadFile.name,
           ContentType: this.uploadFile.type,
@@ -113,9 +123,9 @@ export default {
             this.errMessage = `Upload Error: ${err}`;
           } else {
             // a successful upload will trigger AWS Lambda functions watching this
-            //  particular bucket; fetch result waiting for us from SQS
+            //  particular bucket
             this.success = true;
-            // show spinner
+            // show spinners
             this.imgLoading = true;
             this.rgbLoading = true;
             // fetch results from Lamda trigger and SQS message
@@ -382,7 +392,7 @@ $responsive-width: 599px; // phone responsive breakpoint
 
 .file-name {
   height: 1.2rem;
-  margin:  0.5rem 0.5rem 0.5rem 1.5rem;
+  margin: 0.5rem 0.5rem 0.5rem 1.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 20rem;
