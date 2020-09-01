@@ -15,6 +15,7 @@ export default {
       success: false, // status of full upload to S3 bucket
       errMessage: '', // generic placeholder for error messages
       noneSelected: false, // check value for if an image file has been selected
+      isDisabled: false, // dis/enables buttons
       s3: null, // placeholder for configured aws S3 bucket object
       uploadImg: '', // user submitted image, to be displayed
       uploadFile: undefined, // user file to be uploaded
@@ -72,7 +73,7 @@ export default {
         this.uploadImg = undefined;
         this.errMessage = '';
         // reenable 'Submit Image' button on new file select
-        document.getElementById('submitImage').disabled = false;
+        this.isDisabled = false;
       }
 
       document.getElementById('fileUpload').onchange = () => {
@@ -104,7 +105,7 @@ export default {
         this.errMessage = 'Please select an image to upload';
       } else {
         // disable button while image is uploading to prevent concurrent uploads
-        document.getElementById('submitImage').disabled = true;
+        this.isDisabled = true;
 
         // clear any previous error on new file submission
         if (this.errMessage !== '') this.errMessage = '';
@@ -141,6 +142,7 @@ export default {
 
     getResults() {
       // method called by submitFile() to fetch results via AWS SQS
+
       const sqs = new AWS.SQS({
         apiVersion: '2012-11-05',
         maxRetries: 3,
@@ -159,6 +161,8 @@ export default {
       sqs.receiveMessage(params, (err, data) => {
         if (err) {
           this.errMessage = `Error in retrieving data from SQS: ${err}`;
+          // reset buttons after data loads
+          this.isDisabled = false;
         } else if (data.Messages.length !== 0) {
           const result = JSON.parse(JSON.parse(data.Messages[0].Body).Message).Input;
           // stop spinner
@@ -182,11 +186,15 @@ export default {
           }, (delErr) => {
             if (delErr) this.errMessage = 'Message in SQS queue has not been deleted!';
           });
+          // reset buttons after data loads
+          this.isDisabled = false;
         } else {
           // message was returned from SQS, but empty
           this.imgLoading = false;
           this.rgbLoading = false;
           this.errMessage = 'Return data is empty!';
+          // reset buttons after data loads
+          this.isDisabled = false;
         }
       });
     },
@@ -213,6 +221,7 @@ export default {
           name="myfile"
           type="file"
           accept=".jpg, .jpeg, .png"
+          :disabled="isDisabled"
           @click="fileLoad"
         />
         <label for="fileUpload">
@@ -224,13 +233,16 @@ export default {
         </div>
 
         <div>
-          <input
+          <button
             id="submitImage"
             class="submit-button"
-            type="submit"
-            value="SUMBIT IMAGE"
+            type="button"
+            name="SUMBIT IMAGE"
+            :disabled="isDisabled"
             @click="submitFile"
-          />
+          >
+            SUBMIT IMAGE
+          </button>
         </div>
       </div><!-- inputs -->
 
@@ -357,8 +369,10 @@ $responsive-width: 599px; // phone responsive breakpoint
     border-radius: 5px;
     // File upload button styles
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    cursor: pointer;
+    color: #000;
     display: inline-block;
-    font-size: 1rem;
+    font-size: 0.9rem;
     height: 2.5rem;
     margin: 0.5rem;
     padding-left: 1rem;
@@ -388,6 +402,12 @@ $responsive-width: 599px; // phone responsive breakpoint
     outline: 1px dotted #000;
     outline: -webkit-focus-ring-color auto 1px;
   }
+
+  &:disabled + label {
+    background-color: initial;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    color: GrayText;
+  }
 }
 
 .file-name {
@@ -402,7 +422,8 @@ $responsive-width: 599px; // phone responsive breakpoint
   border-radius: 5px;
   border-style: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  font-size: 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
   height: 2.5rem;
   margin: 0.5rem;
   transition: background-color 0.3s;
@@ -416,6 +437,11 @@ $responsive-width: 599px; // phone responsive breakpoint
   &:active {
     background-color: #fff;
     box-shadow: none;
+  }
+
+  &:disabled {
+    background-color: initial;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   }
 }
 
