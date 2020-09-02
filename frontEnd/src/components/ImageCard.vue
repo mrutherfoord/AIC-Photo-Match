@@ -115,12 +115,11 @@ export default {
 </template>
 
 <style scoped lang="scss">
-$responsive-width: 599px;
 
 .user-card {
   background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: $shadow-depth-2;
   margin: 0.5rem 1rem 0.5rem 1rem;
   max-height: 800px;
   min-height: 500px;
