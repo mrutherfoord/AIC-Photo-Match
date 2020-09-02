@@ -18,6 +18,12 @@ export default {
       Art Institute of Chicago API Color Match App
     </h1>
 
+    <p class="app-copy">
+      This app will take an uploaded image, calculate the dominant color of that image, and then
+      match it to a painting with the Art Institute of Chicago's (AIC) API database which contains
+      the dominant color of the uploaded image within the artwork's top three dominant colors.
+    </p>
+
     <UploadFile />
 
   </div><!-- main -->
@@ -42,7 +48,19 @@ body {
 }
 
 .title {
-  font-weight: 400;
+  color: #b50938; // AIC's logo color
+  font-weight: lighter;
 }
 
+.app-copy {
+  font-family: 'Times New Roman', Times, Georgia, serif;
+  font-size: 1.2rem;
+  margin: auto;
+  text-align: left;
+  width: 40rem;
+
+  @media only screen and (max-width: $responsive-width) {
+    width: 90%;
+  }
+}
 </style>
