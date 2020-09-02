@@ -161,8 +161,6 @@ export default {
       sqs.receiveMessage(params, (err, data) => {
         if (err) {
           this.errMessage = `Error in retrieving data from SQS: ${err}`;
-          // reset buttons after data loads
-          this.isDisabled = false;
         } else if (data.Messages.length !== 0) {
           const result = JSON.parse(JSON.parse(data.Messages[0].Body).Message).Input;
           // stop spinner
@@ -186,16 +184,14 @@ export default {
           }, (delErr) => {
             if (delErr) this.errMessage = 'Message in SQS queue has not been deleted!';
           });
-          // reset buttons after data loads
-          this.isDisabled = false;
         } else {
           // message was returned from SQS, but empty
           this.imgLoading = false;
           this.rgbLoading = false;
           this.errMessage = 'Return data is empty!';
-          // reset buttons after data loads
-          this.isDisabled = false;
         }
+        // reset buttons after data loads
+        this.isDisabled = false;
       });
     },
   }, // end methods()
