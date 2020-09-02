@@ -37,6 +37,9 @@ code. Most of the code I've written, if you're unaccustomed to Vue, is
 
 ### Methods
 
+The AWS chain is defined by Step Functions. The front end utilizes the AWS
+javascript API to interface with it's services.
+
 1. Read file info and upload to configured AWS S3 bucket.
 2. Lamda function is triggered on upload. Once triggered, the Lamda function
    with process the image according to its algorithm to determine dominant color
