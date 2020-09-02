@@ -155,7 +155,7 @@ export default {
         MaxNumberOfMessages: '1',
         MessageAttributeNames: ['*'],
         VisibilityTimeout: 60, // in seconds
-        WaitTimeSeconds: 18, // in seconds, max 20
+        WaitTimeSeconds: 20, // in seconds, max 20, returns sooner if available
       };
 
       sqs.receiveMessage(params, (err, data) => {
@@ -301,10 +301,6 @@ export default {
 </template>
 
 <style scoped lang="scss">
-$progress-fill: #1976d2;
-$success-green: #388e3c;
-$error-red: #d32f2f;
-$responsive-width: 599px; // phone responsive breakpoint
 
 .upload {
   margin: auto;
@@ -326,7 +322,7 @@ $responsive-width: 599px; // phone responsive breakpoint
 .interaction-flex-container {
   align-items: space-evenly;
   border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  box-shadow: $shadow-depth-1;
   display: flex;
   flex-direction: row;
   margin: 1rem auto;
@@ -368,9 +364,9 @@ $responsive-width: 599px; // phone responsive breakpoint
   + label {
     border-radius: 5px;
     // File upload button styles
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    box-shadow: $shadow-depth-1;
     cursor: pointer;
-    color: #000;
+    color: $button-black;
     display: inline-block;
     font-size: 0.9rem;
     height: 2.5rem;
@@ -386,15 +382,13 @@ $responsive-width: 599px; // phone responsive breakpoint
   &:focus + label,
   + label:hover {
     // File upload hover state button styles
-    background-color: #fff;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    @include button-hover;
   }
 
   &:active + label,
   + label:active {
     // button press transition
-    background-color: #fff;
-    box-shadow: none;
+    @include button-active;
   }
 
   &:focus + label {
@@ -404,9 +398,7 @@ $responsive-width: 599px; // phone responsive breakpoint
   }
 
   &:disabled + label {
-    background-color: initial;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    color: GrayText;
+    @include button-inactive;
   }
 }
 
@@ -421,8 +413,10 @@ $responsive-width: 599px; // phone responsive breakpoint
 .submit-button {
   border-radius: 5px;
   border-style: none;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  box-shadow: $shadow-depth-1;
+  color: $button-black;
   cursor: pointer;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 0.9rem;
   height: 2.5rem;
   margin: 0.5rem;
@@ -430,18 +424,15 @@ $responsive-width: 599px; // phone responsive breakpoint
   width: 13rem;
 
   &:hover {
-    background-color: #fff;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    @include button-hover;
   }
 
   &:active {
-    background-color: #fff;
-    box-shadow: none;
+    @include button-active;
   }
 
   &:disabled {
-    background-color: initial;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    @include button-inactive;
   }
 }
 

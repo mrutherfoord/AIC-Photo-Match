@@ -48,7 +48,8 @@ code. Most of the code I've written, if you're unaccustomed to Vue, is
 5. Data is sent to browser and is processed by the app to display data
    information.
 
-### Pitfalls
+### What I Would Chnage if I Had More Time
+
 1. The design structure my collaborator and I chose gets the job done: upload
    and image, process it, and return some data in json form. However, the chain
    of S3 -> Lamda function -> Lamda function -> SNS -> SQS does not seem very
@@ -56,14 +57,22 @@ code. Most of the code I've written, if you're unaccustomed to Vue, is
    seemed to be the best choice to prototype the app. I was able to make the
    appropriate method calls for each service after digging around the
    (well-documented) AWS services APIs.
-2. It's not secure and I'm not sure if the messages in the SQS are going to the
-   correct user instance.
+2. It's not secure in that anyone can upload anything to the S3 bucket,  and I'm
+   not sure if the messages in the SQS are always going to go to the correct
+   user instance.
+3. If the processing time for the image is too long, the results will not be
+   pushed  in time to SNS and SQS within the 20 second max timeout allowed in
+   the AWS sqs.receiveMessage() method: the call to this method is fired as soon
+   as the image is successfully uploaded.
 
 ### TODO
+
 1. Learn and implement AWS Restful API to trigger Lamda functions and serve
    computed json data.
 2. Add more error checking for download of images from the Art Institute's API.
-   Also enforce file type uploading.
-3. Add more data to json like links to the Art Institute's page on the work, or
+   (Note: As of 9/2/2020, more error checking immplemented and shown to user at
+   every step of chain.)
+3. Enforce file type and size upload limit.
+4. Add more data to json like links to the Art Institute's page on the work, or
    maybe a wikipedia article. These extra bits of information will bring the app
    closer to something usable to the general public.
