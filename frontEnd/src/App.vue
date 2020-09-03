@@ -1,10 +1,12 @@
 <script>
 import UploadFile from './components/UploadFile.vue';
+import AppFooter from './components/Footer.vue';
 
 export default {
   name: 'App',
   components: {
     UploadFile,
+    AppFooter,
   },
 };
 </script>
@@ -14,17 +16,23 @@ export default {
     id="app"
     role="main"
   >
-    <h1 class="title">
-      Art Institute of Chicago API Color Match App
-    </h1>
+    <div class="content">
+      <h1 class="title">
+        Art Institute of Chicago API Color Match App
+      </h1>
 
-    <p class="app-copy">
-      This app will take an uploaded image, calculate the dominant color of that image, and then
-      match it to a painting with the Art Institute of Chicago's (AIC) API database which contains
-      the dominant color of the uploaded image within the artwork's top three dominant colors.
-    </p>
+      <p class="app-copy">
+        This app will take an uploaded image, calculate the dominant color of that image, and then
+        match it to a painting with the Art Institute of Chicago's (AIC) API database which contains
+        the dominant color of the uploaded image within the artwork's top three dominant colors.
+      </p>
 
-    <UploadFile />
+      <UploadFile />
+    </div>
+
+    <footer>
+      <AppFooter />
+    </footer>
 
   </div><!-- main -->
 </template>
@@ -34,8 +42,15 @@ export default {
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
-  background-color: #f0f0f0;
+  background-color: #eeeeee;
+  display: flex; // boilerplate to keep footer down below
+  flex-direction: column;
+  margin: 0;
 }
 
 #app {
@@ -43,8 +58,11 @@ body {
   font-family: Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin-top: 20px;
   text-align: center;
+}
+
+.content {
+  flex: 1 0 auto; // grow page space to content
 }
 
 .title {
