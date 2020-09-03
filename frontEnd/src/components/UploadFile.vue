@@ -295,6 +295,10 @@ export default {
 .upload {
   margin: auto;
   text-align: center;
+
+  @media only screen and (max-width: $responsive-width) {
+    width: 95%;
+  }
 }
 
 .interaction-flex-container {
@@ -371,8 +375,8 @@ export default {
 
   &:focus + label {
     // File upload focus state button styles
-    outline: 1px dotted #000;
     outline: -webkit-focus-ring-color auto 1px;
+    outline: 1px dotted #000;
   }
 
   &:disabled + label {
