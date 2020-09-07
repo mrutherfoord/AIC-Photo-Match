@@ -42,27 +42,28 @@ export default {
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
-}
-
 body {
-  background-color: #eeeeee;
-  display: flex; // boilerplate to keep footer down below
-  flex-direction: column;
+  background-color: #eee;
   margin: 0;
 }
 
 #app {
   color: #424242;
+  display: flex; // boilerplate to keep footer down below
+  flex-direction: column; // footer at the botom ;)
   font-family: Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  height: 100vh; // needed to stick the footer to bottom
   text-align: center;
 }
 
 .content {
   flex: 1 0 auto; // grow page space to content
+}
+
+footer {
+  /* Prevent Chrome, Opera, and Safari from letting these items shrink to smaller than their
+  content's default minimum size. */
+  flex-shrink: 0;
 }
 
 .title {
