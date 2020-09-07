@@ -1,5 +1,5 @@
 <template>
-  <div class="footer">
+  <div class="footer-content">
     <div class="footer-copy">
       &#169; 2020
       <br>
@@ -36,20 +36,20 @@
 </template>
 
 <style lang="scss">
-.footer {
-  flex-shrink: 0;
-  width: 100%;
-  height: 6.5rem;
+.footer-content {
   background-color: #e0e0e0;
-  font-size: .9rem;
+  font-size: 0.9rem;
+  height: 6.5rem;
   margin: 3rem 0 0 0;
   padding: 1rem;
   text-align: left;
+  width: 100%;
 }
 
 .footer-copy {
   float: right;
   line-height: 1.2rem;
+  margin-right: 1rem;
 
   & a {
     color: inherit;
@@ -63,6 +63,5 @@
   & a:active {
     color: #fff;
   }
-
 }
 </style>

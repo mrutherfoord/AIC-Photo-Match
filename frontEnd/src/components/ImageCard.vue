@@ -1,14 +1,6 @@
 <script>
-import ClipLoader from 'vue-spinner/src/ClipLoader.vue';
-import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
-
 export default {
   name: 'ImageCard',
-
-  components: {
-    ClipLoader,
-    PulseLoader,
-  },
 
   props: {
     src: {
@@ -35,20 +27,6 @@ export default {
       type: Number,
       default: undefined,
     },
-    imgloading: {
-      type: Boolean,
-      default: false,
-    },
-    rgbloading: {
-      type: Boolean,
-      default: false,
-    },
-  },
-
-  data() {
-    return {
-      spinnerColor: '#2c3e50', // color for all loading spinners
-    };
   },
 
   computed: {
@@ -69,54 +47,37 @@ export default {
       {{ cardtitle }}
     </h2>
     <div class="img-container">
-      <div v-if="imgloading">
-        <div class="bounce-loader">
-          <ClipLoader
-            :loading="imgloading"
-            :color="spinnerColor"
-          />
-        </div>
-      </div>
-      <div v-else>
+      <div>
         <img
           :src="src"
           class="photo"
         />
       </div>
     </div>
-    <div class="color-title">
-      {{ colortitle }}
-    </div>
+    <!-- only need to test for one color value since all are computed simultaneously;
+      - only show if values so that old color swatches aren't present while a new one
+      - is being loaded
+    -->
     <div v-if="red">
-      <!-- only need to test for one color value since all are computed simultaneously;
-         - only show if values so that old color swatches aren't present while a new one
-         - is being loaded
-         -->
+      <div class="color-title">
+        {{ colortitle }}
+      </div>
       <div
         class="color-swatch"
         :style="computedColor"
       >
       </div>
-    </div>
-    <div v-if="rgbloading">
-      <PulseLoader
-        :loading="rgbloading"
-        :color="spinnerColor"
-        :size="'10px'"
-      />
-    </div>
-    <div v-else-if="red">
-      <!-- only need to test for one color value since all are computed simultaneously -->
       <div class="rgb-value">
         rgb({{ red }}, {{ green }}, {{ blue }})
       </div>
-    </div>
+    </div><!-- v-if red -->
   </div>
 </template>
 
 <style scoped lang="scss">
 
 .user-card {
+  animation: fadein 1.5s;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: $shadow-depth-2;
@@ -125,24 +86,22 @@ export default {
   min-height: 500px;
   min-width: 400px;
 
+  @keyframes fadein {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   @media only screen and (max-width: $responsive-width) {
     min-width: 100%;
   }
 }
 
 .card-title {
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .img-container {
   min-height: 300px;
-}
-
-.bounce-loader {
-  align-items: center;
-  display: flex;
-  height: 300px;
-  justify-content: center;
 }
 
 .photo {

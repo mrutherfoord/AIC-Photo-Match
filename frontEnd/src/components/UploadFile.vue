@@ -1,5 +1,6 @@
 <script>
 import AWS from 'aws-sdk';
+import FadeLoader from 'vue-spinner/src/FadeLoader.vue';
 import ImageCard from './ImageCard.vue';
 
 export default {
@@ -7,20 +8,20 @@ export default {
 
   components: {
     ImageCard,
+    FadeLoader,
   },
 
   data() {
     return {
       upProg: 0, // update progress html element
-      success: false, // status of full upload to S3 bucket
+      upSuccess: false, // status of full upload to S3 bucket
       errMessage: '', // generic placeholder for error messages
-      noneSelected: false, // check value for if an image file has been selected
       isDisabled: false, // dis/enables buttons
       s3: null, // placeholder for configured aws S3 bucket object
       uploadImg: '', // user submitted image, to be displayed
-      uploadFile: undefined, // user file to be uploaded
+      uploadFile: undefined, // user file to be uploaded;contains file information as array
       fileName: '', // file name of upload image to display
-      returnAicUrl: '', // object holding the Lamda function returned data, as shown below
+      returnAicUrl: '', // url of AIC artwork
       aicBlue: undefined, // AIC API returned blue , red, green values
       aicRed: undefined,
       aicGreen: undefined,
@@ -28,7 +29,6 @@ export default {
       userRed: undefined,
       userBlue: undefined,
       imgLoading: false, // loading status for return image spinner
-      rgbLoading: false, // loading status for rgb color swatch and text
     };
   }, // end data()
 
@@ -55,14 +55,14 @@ export default {
       // Called when user clicks the #fileUpload button.
 
       // reset if there's a previous image submited
-      if (this.success === true) {
-        this.success = false;
+      if (this.upSuccess === true) {
+        this.upSuccess = false;
         // reset any chosen file to upload, including name
         this.uploadFile = undefined;
         this.fileName = '';
         // reset progress bar
         this.upProg = 0;
-        // rest data values
+        // reset data values
         this.returnAicUrl = '';
         this.aicBlue = undefined;
         this.aicRed = undefined;
@@ -125,10 +125,9 @@ export default {
           } else {
             // a successful upload will trigger AWS Lambda functions watching this
             //  particular bucket
-            this.success = true;
+            this.upSuccess = true;
             // show spinners
             this.imgLoading = true;
-            this.rgbLoading = true;
             // fetch results from Lamda trigger and SQS message
             this.getResults();
           }
@@ -164,7 +163,6 @@ export default {
         } else if (data.Messages.length !== 0) {
           const result = JSON.parse(JSON.parse(data.Messages[0].Body).Message).Input;
           // stop spinner
-          this.rgbLoading = false;
           this.imgLoading = false;
           // set data for prop values for children:
           this.returnAicUrl = result.aic_colors.url; // url of AIC color match
@@ -187,7 +185,6 @@ export default {
         } else {
           // message was returned from SQS, but empty
           this.imgLoading = false;
-          this.rgbLoading = false;
           this.errMessage = 'Return data is empty!';
         }
         // reset buttons after data loads
@@ -248,16 +245,27 @@ export default {
 
         <div class="message-container">
           <div
-            v-if="success"
-            class="success-upload">
+            v-if="upSuccess"
+            class="success-upload"
+          >
             Upload Successful
           </div>
           <!-- placeholder for all error messages -->
           <div
-            v-if="errMessage !== ''"
-            class="error-message">
+            v-if="errMessage"
+            class="error-message"
+          >
             {{ errMessage }}
           </div>
+          <div class="loader">
+            <FadeLoader
+              :loading="imgLoading"
+              :color="'#424242'"
+              :radius="'15px'"
+              :height="'12px'"
+              :width="'3px'"
+            />
+          </div><!-- .loader -->
         </div><!-- message-container -->
       </div><!-- upload-indication -->
 
@@ -266,23 +274,22 @@ export default {
     <div class="card-container">
 
       <ImageCard
+        v-if="uploadImg"
         cardtitle="Uploaded Image"
         colortitle="Dominant Color of This Image"
         :src="uploadImg"
         :red="userRed"
         :green="userGreen"
         :blue="userBlue"
-        :rgbloading="rgbLoading"
       />
       <ImageCard
+        v-if="returnAicUrl"
         cardtitle="AIC Match"
         colortitle="Nearest Color Matched to AIC API"
         :src="returnAicUrl"
         :red="aicRed"
         :green="aicGreen"
         :blue="aicBlue"
-        :imgloading="imgLoading"
-        :rgbloading="rgbLoading"
       />
 
     </div>
@@ -434,7 +441,7 @@ progress[value] {
   appearance: none;
   border-radius: 5px;
   height: 1.5rem;
-  margin: 0.5rem 0 0.2rem 0.4rem;
+  margin: 0.5rem 0 0.5rem 0.4rem;
   width: 80%;
 }
 
@@ -450,8 +457,11 @@ progress[value] {
   margin: 1rem 0 0 0.5rem;
 }
 
+.loader {
+  margin: 1.5rem 0 0 1rem;
+}
+
 .card-container {
-  align-content: center;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
