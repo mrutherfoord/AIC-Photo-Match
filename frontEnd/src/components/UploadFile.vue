@@ -1,14 +1,16 @@
 <script>
 import AWS from 'aws-sdk';
-import FadeLoader from 'vue-spinner/src/FadeLoader.vue';
+import ProgressBar from 'vue-simple-progress';
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 import ImageCard from './ImageCard.vue';
 
 export default {
   name: 'UploadFile',
 
   components: {
+    ProgressBar,
+    PulseLoader,
     ImageCard,
-    FadeLoader,
   },
 
   data() {
@@ -17,6 +19,7 @@ export default {
       upSuccess: false, // status of full upload to S3 bucket
       errMessage: '', // generic placeholder for error messages
       isDisabled: false, // dis/enables buttons
+      imgLoading: false, // loading status for return image spinner
       s3: null, // placeholder for configured aws S3 bucket object
       uploadImg: '', // user submitted image, to be displayed
       uploadFile: undefined, // user file to be uploaded;contains file information as array
@@ -28,7 +31,6 @@ export default {
       userGreen: undefined, // computed dominant rgb colors from uploaded image
       userRed: undefined,
       userBlue: undefined,
-      imgLoading: false, // loading status for return image spinner
     };
   }, // end data()
 
@@ -235,11 +237,17 @@ export default {
 
       <div class="upload-indication">
         <!-- only show progress bar whilst uploading,  but keep it displayed even if error -->
-        <div v-if="upProg > 0">
-          <progress
+        <div
+          v-if="upProg > 0"
+          class="progress-bar"
+        >
+          <ProgressBar
             id="showUpload"
             max="100"
-            :value="upProg"
+            size="20"
+            color="#1976d2"
+            bar-border-radius=3
+            :val="upProg"
           />
         </div>
 
@@ -257,14 +265,20 @@ export default {
           >
             {{ errMessage }}
           </div>
+          <!-- Processing indication -->
           <div class="loader">
-            <FadeLoader
+            <div v-if="imgLoading">
+              Processing
+            </div>
+            <PulseLoader
               :loading="imgLoading"
               :color="'#424242'"
-              :radius="'15px'"
-              :height="'12px'"
-              :width="'3px'"
+              :size="'4px'"
+              :margin="'2px'"
             />
+            <div v-if="aicRed">
+              Processing Complete!
+            </div>
           </div><!-- .loader -->
         </div><!-- message-container -->
       </div><!-- upload-indication -->
@@ -354,8 +368,8 @@ export default {
     border-radius: 5px;
     // File upload button styles
     box-shadow: $shadow-depth-1;
+    color: $text-black;
     cursor: pointer;
-    color: $button-black;
     display: inline-block;
     font-size: 0.9rem;
     height: 2.5rem;
@@ -393,7 +407,7 @@ export default {
 
 .file-name {
   height: 1.2rem;
-  margin: 0.5rem 0.5rem 0.5rem 1.5rem;
+  margin: 0.5rem 0 0.5rem 1rem;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 20rem;
@@ -403,7 +417,7 @@ export default {
   border-radius: 5px;
   border-style: none;
   box-shadow: $shadow-depth-1;
-  color: $button-black;
+  color: $text-black;
   cursor: pointer;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 0.9rem;
@@ -431,34 +445,32 @@ export default {
   width: 50%;
 
   @media only screen and (max-width: $responsive-width) {
+    margin: 0;
     text-align: center;
     width: 100%;
   }
 }
 
-progress[value] {
-  /* Reset the default appearance */
-  appearance: none;
-  border-radius: 5px;
-  height: 1.5rem;
-  margin: 0.5rem 0 0.5rem 0.4rem;
-  width: 80%;
-}
-
 .success-upload {
   color: $success-green;
   font-weight: bold;
-  margin-left: 0.5rem;
+  margin: 0.5rem 0 0 0;
 }
 
 .error-message {
   color: $error-red;
   font-weight: bolder;
-  margin: 1rem 0 0 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.progress-bar {
+  margin-top: 0.5rem;
 }
 
 .loader {
-  margin: 1.5rem 0 0 1rem;
+  display: inline-flex;
+  font-weight: bold;
+  margin: 0.5rem 0 0 0;
 }
 
 .card-container {

@@ -1,10 +1,10 @@
 @mixin button-hover {
-  background-color: #fff;
+  background-color: $white;
   box-shadow: $shadow-depth-2;
 }
 
 @mixin button-active {
-  background-color: #fff;
+  background-color: $white;
   box-shadow: none;
 }
 
