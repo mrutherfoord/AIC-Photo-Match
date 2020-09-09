@@ -43,12 +43,12 @@ export default {
 }
 
 body {
-  background-color: #eee;
+  background-color: $app-background;
   margin: 0;
 }
 
 #app {
-  color: #424242;
+  color: $text-black;
   display: flex; // boilerplate to keep footer down below
   flex-direction: column; // footer at the botom ;)
   font-family: Helvetica, Arial, sans-serif;
@@ -67,7 +67,7 @@ footer {
 }
 
 .title {
-  color: #b50938; // AIC's logo color
+  color: $app-title; // AIC's logo color
   font-weight: lighter;
 }
 
