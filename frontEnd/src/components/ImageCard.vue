@@ -77,7 +77,7 @@ export default {
 <style scoped lang="scss">
 
 .user-card {
-  animation: fadein 1.5s;
+  animation: fadein 1s;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: $shadow-depth-2;
