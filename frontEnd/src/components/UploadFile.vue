@@ -15,7 +15,7 @@ export default {
 
   data() {
     return {
-      upProg: 40, // update progress html element
+      upProg: 0, // update progress html element
       upSuccess: false, // status of full upload to S3 bucket
       errMessage: '', // generic placeholder for error messages
       isDisabled: false, // dis/enables buttons
