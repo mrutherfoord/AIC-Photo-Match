@@ -15,7 +15,7 @@ export default {
 
   data() {
     return {
-      upProg: 0, // update progress html element
+      upProg: 40, // update progress html element
       upSuccess: false, // status of full upload to S3 bucket
       errMessage: '', // generic placeholder for error messages
       isDisabled: false, // dis/enables buttons
@@ -243,9 +243,9 @@ export default {
         >
           <ProgressBar
             id="showUpload"
-            max="100"
-            size="20"
-            color="#1976d2"
+            max=100
+            size=20
+            bar-color="#1E88E5"
             bar-border-radius=3
             :val="upProg"
           />
@@ -276,7 +276,10 @@ export default {
               :size="'4px'"
               :margin="'2px'"
             />
-            <div v-if="aicRed">
+            <div
+              v-if="aicRed"
+              class="process-complete"
+            >
               Processing Complete!
             </div>
           </div><!-- .loader -->
@@ -461,6 +464,10 @@ export default {
   color: $error-red;
   font-weight: bolder;
   margin-top: 0.5rem;
+}
+
+.process-complete {
+  color: $success-green;
 }
 
 .progress-bar {
