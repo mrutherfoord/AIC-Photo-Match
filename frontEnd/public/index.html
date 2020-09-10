@@ -10,6 +10,8 @@
         script-src 'self' 'unsafe-inline' 'unsafe-eval' *;
         style-src  'self' 'unsafe-inline' *">
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <!-- fake icon to not 404 -->
+    <link rel="icon" href="data:,">
   </head>
   <body>
     <noscript>
