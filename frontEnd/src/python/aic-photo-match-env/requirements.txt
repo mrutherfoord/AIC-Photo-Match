@@ -29,7 +29,7 @@ colorama==0.4.3
 colorthief==0.2.1
 constantly==15.1.0
 contextlib2==0.6.0.post1
-cryptography==2.9.2
+cryptography==3.2
 cupshelpers==1.0
 decorator==4.4.2
 defusedxml==0.6.0
