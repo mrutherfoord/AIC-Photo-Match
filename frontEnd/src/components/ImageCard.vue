@@ -51,7 +51,7 @@ export default {
         <img
           :src="src"
           class="photo"
-        />
+        >
       </div>
     </div>
     <!-- only need to test for one color value since all are computed simultaneously;
@@ -65,8 +65,7 @@ export default {
       <div
         class="color-swatch"
         :style="computedColor"
-      >
-      </div>
+      />
       <div class="rgb-value">
         rgb({{ red }}, {{ green }}, {{ blue }})
       </div>

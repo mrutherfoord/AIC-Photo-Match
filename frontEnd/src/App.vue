@@ -33,7 +33,6 @@ export default {
     <footer>
       <AppFooter />
     </footer>
-
   </div><!-- main -->
 </template>
 
