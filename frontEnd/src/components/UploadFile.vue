@@ -84,7 +84,7 @@ export default {
         // display file name on selection
         this.fileName = pic[0].name;
 
-        [this.uploadFile] = pic; // only upload one file, destructured approach
+        [this.uploadFile] = pic; // only upload one file
 
         // get info on image and display
         const reader = new FileReader();
@@ -200,9 +200,7 @@ export default {
 
 <template>
   <div class="upload">
-
     <div class="interaction-flex-container">
-
       <div class="inputs">
         <input
           id="fileUpload"
@@ -212,7 +210,7 @@ export default {
           accept=".jpg, .jpeg, .png"
           :disabled="isDisabled"
           @click="fileLoad"
-        />
+        >
         <label for="fileUpload">
           SELECT YOUR IMAGE
         </label>
@@ -233,7 +231,8 @@ export default {
             SUBMIT IMAGE
           </button>
         </div>
-      </div><!-- inputs -->
+      </div>
+      <!-- inputs -->
 
       <div class="upload-indication">
         <!-- only show progress bar whilst uploading,  but keep it displayed even if error -->
@@ -243,10 +242,10 @@ export default {
         >
           <ProgressBar
             id="showUpload"
-            max=100
-            size=20
+            max="100"
+            size="20"
             bar-color="#1E88E5"
-            bar-border-radius=3
+            bar-border-radius="3"
             :val="upProg"
           />
         </div>
@@ -282,14 +281,16 @@ export default {
             >
               Processing Complete!
             </div>
-          </div><!-- .loader -->
-        </div><!-- message-container -->
-      </div><!-- upload-indication -->
-
-    </div><!-- interaction-flex-container -->
+          </div>
+          <!-- .loader -->
+        </div>
+        <!-- message-container -->
+      </div>
+      <!-- upload-indication -->
+    </div>
+    <!-- interaction-flex-container -->
 
     <div class="card-container">
-
       <ImageCard
         v-if="uploadImg"
         cardtitle="Uploaded Image"
@@ -308,9 +309,7 @@ export default {
         :green="aicGreen"
         :blue="aicBlue"
       />
-
     </div>
-
   </div>
 </template>
 

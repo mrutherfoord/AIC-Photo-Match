@@ -28,7 +28,7 @@
         noreferrer
         target="_blank"
       >
-        Project GitHub
+        [ Project GitHub ]
       </a>
       <br>
     </div>
