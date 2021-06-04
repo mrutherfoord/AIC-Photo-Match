@@ -19,6 +19,7 @@ export default {
       upSuccess: false, // status of full upload to S3 bucket
       errMessage: '', // generic placeholder for error messages
       isDisabled: false, // dis/enables buttons
+      submitDisabled: true,
       imgLoading: false, // loading status for return image spinner
       s3: null, // placeholder for configured aws S3 bucket object
       uploadImg: '', // user submitted image, to be displayed
@@ -76,6 +77,7 @@ export default {
         this.errMessage = '';
         // reenable 'Submit Image' button on new file select
         this.isDisabled = false;
+        this.submitDisabled = true;
       }
 
       document.getElementById('fileUpload').onchange = () => {
@@ -95,6 +97,7 @@ export default {
             this.uploadImg = event.target.result; // loads image
           };
           reader.readAsDataURL(this.uploadFile); // shows image
+          this.submitDisabled = false; // enable button to upload
         }
       };
     },
@@ -102,7 +105,8 @@ export default {
     submitFile() {
       // Called when user clicks 'Submit Image' button
 
-      // check to see if a file has been chosen for upload
+      // check to see if a file has been chosen for upload; shouldn't see this at all because
+      //  the check is in the ":disable" property logic
       if (!this.uploadFile) {
         this.errMessage = 'Please select an image to upload';
       } else {
@@ -191,6 +195,7 @@ export default {
         }
         // reset buttons after data loads
         this.isDisabled = false;
+        this.submitDisabled = true;
       });
     },
   }, // end methods()
@@ -225,7 +230,7 @@ export default {
             class="submit-button"
             type="button"
             name="SUMBIT IMAGE"
-            :disabled="isDisabled"
+            :disabled="isDisabled || submitDisabled"
             @click="submitFile"
           >
             SUBMIT IMAGE
